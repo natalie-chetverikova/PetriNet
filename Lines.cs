@@ -63,6 +63,7 @@ namespace PetriNets
 
                 if (to.Y + 1 == from.Y) //На одной высоте
                 {
+                    inp = input(to, true);
                     one_height(inp, outp, ot, f, t);
                     if (f == 0)
                     {
@@ -107,7 +108,7 @@ namespace PetriNets
                 }
 
 
-                field_matrix[inp[t].X / sc - ((to.X < from.X) ? 0 : 1), inp[t].Y / sc] = 1;
+                field_matrix[inp[t].X / sc - ((to.X < from.X) ? ((to.Y + 1 == from.Y) ? 1 : 0) : 1), inp[t].Y / sc] = 1;
 
             }
             else //Из кирпича в кружок
@@ -133,6 +134,7 @@ namespace PetriNets
 
                 if (to.Y == from.Y + 1) //На одной высоте
                 {
+
                     one_height(inp, outp, ot, f%3, t);
                     field_matrix[outp[f].X / sc, outp[f].Y / sc] = 1;
 
@@ -197,10 +199,6 @@ namespace PetriNets
             return new Point((int)((p.X + 0.5 + distancehor) * sc), (int)((p.Y + 0.5 + distancever) * sc));
         }
 
- 
-
-      
-
         //On one height
         private void one_height(Point []  inp, Point [] outp, int ot, int f, int t) 
         {
@@ -210,17 +208,36 @@ namespace PetriNets
             {
                 Point a0 = new Point(outp[f].X + ot, outp[f].Y);
                 Point b0 = new Point(inp[t].X - ot, inp[t].Y);
-
-                while (!testX(a, b))
+//Сюда тот цикл со сменой знака
+                for (int i = 0; i < field_matrix.GetLength(0); i++)
                 {
-                    a.Y += sc;
-                    b.Y += sc;
+                    if (testX(a, b)) break;
+                    a.Y += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                    b.Y += (int)Math.Pow(-1, i) * (i + 1) * sc;
+
+                }
+
+                for (int i = 0; i < field_matrix.GetLength(0); i++)
+                {
+                    if (testY(a0, a)) break;
+                    a0.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                    a.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+
+                }
+
+                for (int i = 0; i < field_matrix.GetLength(0); i++)
+                {
+                    if (testY(b0, b)) break;
+                    b0.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                    b.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+
                 }
                 points.Add(outp[f], a0);
                 points.Add(a0, a);
                 points.Add(a, b);
                 points.Add(b, b0);
                 points.Add(b0, inp[t]);
+                
             }
             else
             {
@@ -233,24 +250,51 @@ namespace PetriNets
         }
 
         //On dif height
-
         private void dif_height(Point[] inp, Point[] outp, int ot, int f, int t)
         {
             Point a = new Point(outp[f].X, inp[t].Y);
             Point b = new Point(inp[t].X - ot, inp[t].Y);
-            if (!testX(a, b))
+            if (!testX(a, b) || !testY(outp[f],a))
             {
                 Point b0 = new Point(inp[t].X - ot, inp[t].Y);
+                Point a0 = new Point(outp[f].X, outp[f].Y - ot);
+                Point a1 = a0;
 
-                while (!testX(a, b))
-                {
-                    a.Y += sc;
-                    b.Y += sc;
+                //And here
+                    for (int i = 0; i < field_matrix.GetLength(0); i++)
+                    {
+                        if (testX(a, b)) break;
+                        a.Y +=(int)Math.Pow(-1, i) * (i + 1) * sc;
+                        b.Y +=(int)Math.Pow(-1, i) * (i + 1) * sc;
+                        
+                    }
+
+                    for (int i = 0; i < field_matrix.GetLength(0); i++)
+                    {
+                        if (testY(a0, a)) break;
+                        a0.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                        a.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                        
+                    }
+
+                    for (int i = 0; i < field_matrix.GetLength(0); i++)
+                    {
+                        if (testY(b0, b)) break;
+                        b0.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                        b.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+
+                    }
+
+               try
+              {
+                    points.Add(outp[f], a1);
+                   if (!a1.Equals(a0)) points.Add(a1, a0);
+                   points.Add(a0, a);
+                    points.Add(a, b);
+                   if(!b.Equals(b0)) points.Add(b, b0);
+                    points.Add(b0, inp[t]);
                 }
-                points.Add(outp[f], a);
-                points.Add(a, b);
-                points.Add(b, b0);
-                points.Add(b0, inp[t]);
+               catch (Exception) {  }
             }
             else
             {
@@ -269,32 +313,59 @@ namespace PetriNets
            // if (inp[t].X < outp[f].X) ot = -ot; 
             Point a = new Point(inp[t].X - ot, outp[f].Y);
             Point b = new Point(inp[t].X - ot, inp[t].Y);
-            if (!testX(a, b))
+            if (!testX(outp[f], a))
             {
-                Point b0 = new Point(inp[t].X - ot, inp[t].Y);
+                Point b0 = b;
+                Point b1 = b0;
+                Point a0 = new Point(outp[f].X - ot, outp[f].Y);
+                Point a1 = a0;
 
-                while (!testX(a, b))
-                {
-                    a.Y += sc;
-                    b.Y += sc;
-                }
-                points.Add(outp[f], a);
+                    for (int i = 0; i < field_matrix.GetLength(0); i++)
+                    {
+                        if (testX(a, a0)) break;
+                        a.Y += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                        a0.Y += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                    }
+
+                    for (int i = 0; i < field_matrix.GetLength(0); i++)
+                    {
+                        if (testY(a, b)) break;
+                        a.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+                        b.X += (int)Math.Pow(-1, i) * (i + 1) * sc;
+
+                        for (int j = 0; j < field_matrix.GetLength(0); j++)
+                        {
+                            if (testX(b0, b)) break;
+                            b0.Y += (int)Math.Pow(-1, j) * (j + 1) * sc;
+                            b.Y += (int)Math.Pow(-1, j) * (j + 1) * sc;
+                        }
+                    }
+                points.Add(outp[f], a1);
+                if (!a1.Equals(a0)) points.Add(a1, a0);
+                points.Add(a0, a);
                 points.Add(a, b);
-                points.Add(b, b0);
-                points.Add(b0, inp[t]);
+                if (!b.Equals(b0)) points.Add(b, b0);
+                if (!b0.Equals(b1)) points.Add(b0, b1);
+                points.Add(b1, inp[t]);
             }
             else
             {
-                points.Add(outp[f], a);
-                points.Add(a, b);
-                points.Add(b, inp[t]);
+                try
+                {
+                    points.Add(outp[f], a);
+                    points.Add(a, b);
+                    points.Add(b, inp[t]);
+                }
+                catch (Exception)
+                {
+                    
+                }
             }
 
             int ar = 5;
             points.Add(new Point(inp[t].X - ar, inp[t].Y - ar), inp[t]);
             points.Add(new Point(inp[t].X - ar, inp[t].Y + ar), inp[t]);
         }
-
 
         private Point[] input(Point p, bool time)
         {
@@ -318,7 +389,6 @@ namespace PetriNets
                 return pos;
             }
         }
-
 
         private Point [] output(Point p, bool time)
         {
