@@ -22,7 +22,7 @@ namespace PetriNets
         private List<int> positions;// = new List<int>();
         private List<Position> arr_pos;
         private List<Transition> arr_trans;
-        int field_Size = 1000;
+        int field_Size;
         int move;
         bool redraw = false;
         bool istomove = false;
@@ -49,6 +49,8 @@ namespace PetriNets
         public Form1()
         {
             InitializeComponent();
+            
+            field_Size = Math.Max(this.splitContainer1.Panel2.Width/sc + 10, this.splitContainer1.Panel2.Height/sc + 10);
             clean_field();
             
             this.splitContainer1.Panel2.MouseDown += new MouseEventHandler(Panel2_MouseDown);
@@ -351,6 +353,8 @@ namespace PetriNets
         {
          //   System.Drawing.Drawing2D.GraphicsPath p = new System.Drawing.Drawing2D.GraphicsPath();
             grafx.Render(e.Graphics);
+            e.Graphics.DrawString("" + field_Size, Font, Brushes.Red, 100, 100);
+       
         }
         
         public void updateTable()
@@ -592,6 +596,11 @@ namespace PetriNets
                     //Console.Write("From: {0:d} : {1:d} To: {2:d} : {3:d} \n", points.Key.X, points.Key.Y, points.Value.X, points.Value.Y);
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
