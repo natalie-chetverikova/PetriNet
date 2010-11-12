@@ -10,11 +10,11 @@ namespace PetriNets
     public class Transition
     {
         //порядковый номер в листе переходов
-        private static int index
+        public static int Id_cntr
         { get; set; }
         public int ID
         { get; set; }
-        public int fieldnumber
+        public int Fieldnumber
         { get; set; }
         public string Type
         { get; set; }
@@ -22,13 +22,14 @@ namespace PetriNets
         { get; set; }
         public Dictionary<Position, int> DictOfIn
         { get; set; }
-        
+
+        public System.Drawing.Point Location
+        { get; set; }
 
         public Transition(int fieldnumber)
         {
-            ID = index;
-            index++;
-            this.fieldnumber = fieldnumber;
+            ID = Id_cntr++;
+            this.Fieldnumber = fieldnumber;
             DictOfIn = new Dictionary<Position, int>();
             //мгновенный
             if (ID % 2 == 1)
@@ -59,16 +60,6 @@ namespace PetriNets
         public void deleteIn(Position o)
         {
             DictOfIn[o]--;            
-        }
-
-        public void setIndex(int iindex)
-        {
-            index = iindex; 
-        }
-
-        public int getIndex()
-        {
-            return index;
         }
 
     }
