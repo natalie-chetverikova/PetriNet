@@ -22,7 +22,7 @@ namespace PetriNets
         private List<int> positions;// = new List<int>();
         private List<Position> arr_pos;
         private List<Transition> arr_trans;
-        int field_Size = 1000;
+        int field_Size;
         int move;
         bool redraw = false;
         bool istomove = false;
