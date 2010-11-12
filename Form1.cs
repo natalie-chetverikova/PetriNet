@@ -49,7 +49,7 @@ namespace PetriNets
         public Form1()
         {
             InitializeComponent();
-            clean_field();
+            clear_field();
             
             this.splitContainer1.Panel2.MouseDown += new MouseEventHandler(Panel2_MouseDown);
             this.splitContainer1.Panel2.MouseUp += new MouseEventHandler(Panel2_MouseUp);
@@ -234,8 +234,7 @@ namespace PetriNets
                         drawing_Field[i, j] = 0;
                 }
         }
-
-
+        
         private void reconnect_nodes()
         {
             line_counter = 1;
@@ -250,7 +249,7 @@ namespace PetriNets
                     int count = inp.Value;
                     while (count-- > 0)
                     {
-                        lines.connect_two_points(el_pos[pos.ID + 11], el_pos[p.fieldnumber]);
+                        lines.connect_two_points(el_pos[pos.ID + 11], el_pos[p.Fieldnumber]);
                         el_con_points.Add(new Dictionary<Point, Point>());
                         el_con_points[line_counter++] = lines.Points;
                     }
@@ -265,7 +264,7 @@ namespace PetriNets
                     int count = inp.Value;
                     while (count-- > 0)
                     {
-                        lines.connect_two_points(el_pos[tr.fieldnumber], el_pos[p.ID + 11]);
+                        lines.connect_two_points(el_pos[tr.Fieldnumber], el_pos[p.ID + 11]);
                         el_con_points.Add(new Dictionary<Point, Point>());
                         el_con_points[line_counter++] = lines.Points;
                     }
@@ -446,7 +445,7 @@ namespace PetriNets
                       
         }
         
-        private void clean_field()
+        private void clear_field()
         {
             
             drawing_Field = new int[field_Size, field_Size];
@@ -486,7 +485,7 @@ namespace PetriNets
         {
             SaveFileDialog savedialog = new SaveFileDialog();
             //savedialog.InitialDirectory = " . ";
-            savedialog.Filter = "petri nets files (*.pni)|*.pni|All flles(*.*)|*.*";
+            savedialog.Filter = "petri net files (*.pni)|*.pni|All flles(*.*)|*.*";
             savedialog.FilterIndex = 1;
             savedialog.RestoreDirectory = true;
             savedialog.FileName = "PetriNetsProject";
@@ -496,16 +495,16 @@ namespace PetriNets
                 FileStream fs = new FileStream(savedialog.FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryFormatter bf = new BinaryFormatter();
                 List<Object> serializedinfo = new List<Object>();
-                serializedinfo.Add(arr_pos);
-                serializedinfo.Add(arr_trans);
+                serializedinfo.Add(arr_pos);//+
+                serializedinfo.Add(arr_trans);//+
                 serializedinfo.Add(indexpair);
-                serializedinfo.Add(drawing_Field);
+                //serializedinfo.Add(drawing_Field);
                 serializedinfo.Add(el_con_points);
                 serializedinfo.Add(el_pos);
-                serializedinfo.Add(positions);
-                serializedinfo.Add(el_num);
-                serializedinfo.Add(line_counter);
-                if (arr_trans.Count != 0) { serializedinfo.Add(arr_trans[0].getIndex()); } //вот это не работает а надо
+                //serializedinfo.Add(positions);//-
+                serializedinfo.Add(el_num);//+
+                serializedinfo.Add(line_counter);//+
+                
 
                 bf.Serialize(fs, serializedinfo);
 
@@ -517,7 +516,7 @@ namespace PetriNets
         {
             OpenFileDialog savedialog = new OpenFileDialog();
             //savedialog.InitialDirectory = ".";
-            savedialog.Filter = "petri nets files (*.pni)|*.pni|All flles(*.*)|*.*";
+            savedialog.Filter = "petri net files (*.pni)|*.pni|All flles(*.*)|*.*";
             savedialog.FilterIndex = 1;
             savedialog.RestoreDirectory = true;
             if (savedialog.ShowDialog() == DialogResult.OK)
@@ -527,29 +526,44 @@ namespace PetriNets
                 List<Object> serializedinfo = new List<Object>();
                 serializedinfo = (List<Object>)bf.Deserialize(fs);
                 fs.Close();
-                clean_field();
+                clear_field();
                 arr_pos = (List<Position>)serializedinfo[0];
                 arr_trans = (List<Transition>)serializedinfo[1];
-                indexpair = (Dictionary<int, int>)serializedinfo[2];
                 drawing_Field = (int[,])serializedinfo[3];
                 el_con_points = (List<Dictionary<Point, Point>>)serializedinfo[4];
                 el_pos = (Dictionary<int, Point>)serializedinfo[5];
-                positions = (List<int>)serializedinfo[6];
+
                 el_num = (int[])serializedinfo[7];
                 line_counter = (int)serializedinfo[8];
-                if (arr_trans.Count != 0) { arr_trans[0].setIndex((int)serializedinfo[9]); }//и это тоже не работает
-                DrawToBuffer(grafx.Graphics);
-                this.splitContainer1.Panel2.Invalidate();
-                //this.Text += arr_pos[0].Tokens;
+                
+                fs.Close();
+                //index
+                ((Transition)arr_trans[0]).setIndex(arr_trans.Count);
+                //indexpair
+                for (int i = 0; i < arr_pos.Count; i++)
+                {
+                    indexpair.Add(arr_pos[i].ID + 11, arr_pos[i].ID);
+                }
+                for (int i = 0; i < arr_trans.Count; i++)
+                {
+                    indexpair.Add(arr_trans[i].getIndex(), arr_trans[i].ID);
+                }
+                //positions
+                for (int i = 0; i < arr_pos.Count; i++)
+                {
+                    positions.Add(arr_pos[i].Tokens);
+                }
+                //drawing field
+                //подумать сделать
 
-                //вооот здесь нужно перерисовать все
+                this.splitContainer1.Panel2.Invalidate();
             }               
         }        
 
-        private void clean_Click(object sender, EventArgs e)
+        private void clear_Click(object sender, EventArgs e)
         {
             if (arr_trans.Count != 0) { arr_trans[0].setIndex(0); }
-            clean_field();
+            clear_field();
             DrawToBuffer(grafx.Graphics);
             this.splitContainer1.Panel2.Invalidate();
         }
@@ -592,6 +606,25 @@ namespace PetriNets
                     //Console.Write("From: {0:d} : {1:d} To: {2:d} : {3:d} \n", points.Key.X, points.Key.Y, points.Value.X, points.Value.Y);
                 }
             }
+        }
+
+        private void tree_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rename_Click(object sender, EventArgs e)
+        {
+            //переименовать при удалении
+            for (int i = 0; i < arr_pos.Count; i++)
+            {
+                ((Position)arr_pos[i]).ID = i;
+            }
+            for (int i = 0; i < arr_trans.Count; i++)
+            {
+                ((Transition)arr_trans[i]).ID = i;
+            }
+            ((Transition)arr_trans[0]).setIndex(arr_trans.Count);
         }
     }
 }

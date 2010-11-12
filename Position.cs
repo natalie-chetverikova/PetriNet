@@ -9,17 +9,25 @@ namespace PetriNets
     [Serializable]
     public class Position
     {
+        private static int index;
         public int ID
+        { get; set; }
+        public int Fieldnumber
+        { get; set; }
+        public string name
         { get; set; }
         public int Tokens
         { get; set; }
         public Dictionary<Transition, int> DictOfIn
         { get; set; }
-        
-        
-        public Position(int ID)
+
+
+        public Position(int fieldnumber)
         {
-            this.ID = ID;
+            ID = index;
+            index++; 
+            name = "p" + ID;
+            this.Fieldnumber = fieldnumber;
             Tokens = 0;
             DictOfIn = new Dictionary<Transition, int>();            
         }

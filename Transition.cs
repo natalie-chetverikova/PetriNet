@@ -12,9 +12,11 @@ namespace PetriNets
         //порядковый номер в листе переходов
         private static int index
         { get; set; }
+        public string name
+        { get; set; }
         public int ID
         { get; set; }
-        public int fieldnumber
+        public int Fieldnumber
         { get; set; }
         public string Type
         { get; set; }
@@ -28,7 +30,8 @@ namespace PetriNets
         {
             ID = index;
             index++;
-            this.fieldnumber = fieldnumber;
+            name = "t" + ID;
+            this.Fieldnumber = fieldnumber;
             DictOfIn = new Dictionary<Position, int>();
             //мгновенный
             if (ID % 2 == 1)
