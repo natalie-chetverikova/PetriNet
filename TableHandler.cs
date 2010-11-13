@@ -28,8 +28,11 @@ public class TableHandler : Form
         row = arr_trans.Count;
         col = arr_pos.Count;
         this.choice = choice;
-        grid = new DataGridView();
-        this.Load += new EventHandler(TableHandler_Load);        
+       //это надо делать если 123
+                    grid = new DataGridView();
+                    this.Load += new EventHandler(TableHandler_Load);
+       //авот это если 4
+        //кто все эти цифры спустя 3 дня не помню даже я
     }
 
     //выбирает какую матрицу генерить
@@ -63,7 +66,7 @@ public class TableHandler : Form
                         }
                         
                         grid.Rows.Add(row0);
-                        grid.Rows[j].HeaderCell.Value = string.Concat("t", "" + ((Transition)arr_trans[j]).ID);
+                        grid.Rows[j].HeaderCell.Value = ((Transition)arr_trans[j]).name;
                     }
                     }
                     break;
@@ -91,7 +94,7 @@ public class TableHandler : Form
                                 }
                             }
                             grid.Rows.Add(row0);
-                            grid.Rows[j].HeaderCell.Value = string.Concat("t", "" + ((Transition)arr_trans[j]).ID);
+                            grid.Rows[j].HeaderCell.Value = ((Transition)arr_trans[j]).name;
                         }
                     }
                     break;
@@ -123,7 +126,7 @@ public class TableHandler : Form
         
         for (int i = 0; i < col; i++)
         {
-            grid.Columns[i].HeaderText = string.Concat("p", "" + ((Position)arr_pos[i]).ID);
+            grid.Columns[i].HeaderText = ((Position)arr_pos[i]).name;
         }
         grid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
         
@@ -151,7 +154,6 @@ public class TableHandler : Form
         grid.AutoSize = true;
         grid.MaximumSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
         grid.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-
     }
 
     private void InitializeComponent()
