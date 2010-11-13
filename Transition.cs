@@ -61,6 +61,5 @@ namespace PetriNets
         {
             DictOfIn[o]--;            
         }
-
     }
 }

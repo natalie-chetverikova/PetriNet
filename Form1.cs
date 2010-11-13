@@ -16,10 +16,10 @@ namespace PetriNets
     [Serializable]
     public partial class Form1 : Form
     {
+//blablabla
         private int[,] drawing_Field;
         private int sc = 10;
         private Rectangle rect;
-        private List<int> positions;// = new List<int>();
         private List<Position> arr_pos;
         private List<Transition> arr_trans;
         int field_Size;
@@ -28,7 +28,6 @@ namespace PetriNets
         bool istomove = false;
         private int[] el_num;
         //int x, y;
-        private System.Collections.Generic.Dictionary<int, Point> el_pos;
         private List<Dictionary<Point, Point>> el_con_points;
         //private System.Collections.DictionaryEntry el_pos_entry = new System.Collections.DictionaryEntry();
         bool down = false;
@@ -56,6 +55,7 @@ namespace PetriNets
             this.splitContainer1.Panel2.MouseDown += new MouseEventHandler(Panel2_MouseDown);
             this.splitContainer1.Panel2.MouseUp += new MouseEventHandler(Panel2_MouseUp);
             this.splitContainer1.Panel2.MouseMove += new MouseEventHandler(Panel2_MouseMove);
+            this.SizeChanged += new EventHandler(Form1_SizeChanged);
             //    this.splitContainer1.Panel2.MouseEnter += new EventHandler(Panel2_MouseEnter);
             this.splitContainer1.Panel2.MouseDoubleClick += new MouseEventHandler(Panel2_MouseDoubleClick);
             rect.X = 0;
@@ -73,7 +73,7 @@ namespace PetriNets
             el_num[1] = 10;
             el_num[2] = -1;
             el_num[3] = -2;
-            this.Text = "Petri Nets Project";
+            this.Text = "Petri Panda Project";
 
             context = BufferedGraphicsManager.Current;
             context.MaximumBuffer = new Size(this.splitContainer1.Panel2.Width + 1, this.splitContainer1.Panel2.Height + 1);
@@ -88,6 +88,18 @@ namespace PetriNets
             //lines = new Lines(sc);
         }
 
+        void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            field_Size = Math.Max(this.splitContainer1.Panel2.Width / sc + 10, this.splitContainer1.Panel2.Height / sc + 10);
+            drawing_Field = new int[field_Size, field_Size];
+            updateTable();
+            context.MaximumBuffer = new Size(this.splitContainer1.Panel2.Width + 1, this.splitContainer1.Panel2.Height + 1);
+            grafx = context.Allocate(this.splitContainer1.Panel2.CreateGraphics(), new Rectangle(0, 0, this.splitContainer1.Panel2.Width, this.splitContainer1.Panel2.Height));
+            grafx.Graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, this.splitContainer1.Panel2.Width, this.splitContainer1.Panel2.Height));
+            DrawToBuffer(grafx.Graphics);
+            this.splitContainer1.Panel2.Invalidate();
+        }
+
         void Panel2_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // move = 0;
@@ -96,8 +108,7 @@ namespace PetriNets
             istomove = false;
             if (drawing_Field[x, y] > 10)
             {
-                positions[drawing_Field[x, y] - 11]++;
-                ((Position)arr_pos[drawing_Field[x, y] - 11]).Tokens++;
+                arr_pos[indexpair[drawing_Field[x, y]]].Tokens++;
             }
         }
 
@@ -110,10 +121,9 @@ namespace PetriNets
             
             int x = e.X / sc;
             int y = e.Y / sc;
-            if (drawing_Field[x, y] > 10 && e.Button.Equals(MouseButtons.Right) && positions[drawing_Field[x, y] - 11] > 0)
+            if (drawing_Field[x, y] > 10 && e.Button.Equals(MouseButtons.Right) && arr_pos[indexpair[drawing_Field[x, y]]].Tokens > 0)
             {
-                positions[drawing_Field[x, y] - 11]--;
-                ((Position)arr_pos[drawing_Field[x, y] - 11]).Tokens--;
+                arr_pos[indexpair[drawing_Field[x, y]]].Tokens--;
                 move = 0;
             }
             else
@@ -132,11 +142,11 @@ namespace PetriNets
                         {
                             el_num[val]++;
                             move = el_num[val];
-                            positions.Add(0);
-                            el_pos.Add(el_num[val], new Point(x, y));
-                            //
-                            arr_pos.Add(new Position(el_num[val] - 11));
-                            indexpair.Add(el_num[val], ((Position)arr_pos.Last()).ID);
+                            //news
+                            Position p = new Position(el_num[val]);
+                            p.Location = new Point(x, y); 
+                            arr_pos.Add(p);
+                            indexpair.Add(el_num[val], p.ID);
                             //
                             istomove = true;
                             break;
@@ -145,10 +155,11 @@ namespace PetriNets
                         {
                             el_num[val] -= 2;
                             move = el_num[val];
-                            el_pos.Add(el_num[val], new Point(x, y));
-                            //
-                            arr_trans.Add(new Transition(el_num[val]));
-                            indexpair.Add(el_num[val], ((Transition)arr_trans.Last()).ID);
+                            //news
+                            Transition t = new Transition(el_num[val]);
+                            t.Location = new Point(x, y);
+                            arr_trans.Add(t);
+                            indexpair.Add(el_num[val], t.ID);
                             //
                             istomove = true;
                             break;
@@ -157,10 +168,11 @@ namespace PetriNets
                         {
                             el_num[val] -= 2;
                             move = el_num[val];
-                            el_pos.Add(el_num[val], new Point(x, y));
                             //
-                            arr_trans.Add(new Transition(el_num[val]));
-                            indexpair.Add(el_num[val], ((Transition)arr_trans.Last()).ID);
+                            Transition t = new Transition(el_num[val]);
+                            t.Location = new Point(x, y);
+                            arr_trans.Add(t);
+                            indexpair.Add(el_num[val], t.ID);
                             //
                             istomove = true;
                             break;
@@ -169,11 +181,9 @@ namespace PetriNets
                         {
                             if (move < 0 || move > 10)
                             {
-                               // line_counter++;
                                 temp = e.Location;
                                 el_con_points.Add(new Dictionary<Point, Point>());
-                                // el_con_points[line_counter].Add(new Point((el_pos[move].X + 3 )*sc, (el_pos[move].Y + 1) *sc),  new Point(0,0));
-                                drlin = true;
+                               drlin = true;
                             }
                             break;
                         }
@@ -189,11 +199,13 @@ namespace PetriNets
             if (down && xm > 0 && ym > 0 && !buttons[4].Focused)
             {
                 if (move != 0)
-                {
-                    el_pos[move] = new Point(xm, ym);
-                    //  updateTable(); //ХЗ че изменилось когда убрал, если чет не работает то скорее всего бага здесь
-                    // this.splitContainer1.Panel2.Invalidate(new Rectangle(sc * (Math.Min(xm, x) - 3), sc * (Math.Min(ym, y) - 3), sc * (Math.Abs(xm - x) + 2) , sc * (Math.Abs(ym - y))+2));
+                {   //news
+                    if(move > 10)
+                        arr_pos[indexpair[move]].Location = new Point(xm, ym);
+                    else
+                        arr_trans[indexpair[move]].Location = new Point(xm, ym);
 
+                 
                     clearline();
                     reconnect_nodes();
                     DrawToBuffer(grafx.Graphics);
@@ -252,7 +264,9 @@ namespace PetriNets
                     int count = inp.Value;
                     while (count-- > 0)
                     {
-                        lines.connect_two_points(el_pos[pos.ID + 11], el_pos[p.fieldnumber]);
+                        //news
+                        lines.connect_two_points(pos.Location, p.Location);
+                        //
                         el_con_points.Add(new Dictionary<Point, Point>());
                         el_con_points[line_counter++] = lines.Points;
                     }
@@ -267,7 +281,9 @@ namespace PetriNets
                     int count = inp.Value;
                     while (count-- > 0)
                     {
-                        lines.connect_two_points(el_pos[tr.fieldnumber], el_pos[p.ID + 11]);
+                        //news
+                        lines.connect_two_points(tr.Location, p.Location);
+                        //
                         el_con_points.Add(new Dictionary<Point, Point>());
                         el_con_points[line_counter++] = lines.Points;
                     }
@@ -305,7 +321,6 @@ namespace PetriNets
                             x = x0;
                             y = y0;
                             free = true;
-                            //el_pos[move] = new Point(x, y);
                             break;
                         }
                         else
@@ -317,11 +332,16 @@ namespace PetriNets
                     ro++;
 
                 }
-                el_pos[move] = new Point(x, y);
+                //news
+                if (move > 10)
+                    arr_pos[indexpair[move]].Location = new Point(x, y);
+                else
+                    arr_trans[indexpair[move]].Location = new Point(x, y);
+
                 updateTable();
                 DrawToBuffer(grafx.Graphics);
                 if (!buttons[0].Focused && !redraw)
-                   this.splitContainer1.Panel2.Invalidate(new Rectangle(sc * (x - 1), sc * (y - 1), sc * 7, sc * 7));
+                   this.splitContainer1.Panel2.Invalidate(new Rectangle(sc * (x - 1), sc * (y - 2), sc * 7, sc * 7));
                 else
                 {
                     this.splitContainer1.Panel2.Invalidate();
@@ -332,8 +352,16 @@ namespace PetriNets
             {
                 if (buttons[4].Focused && drlin && (drawing_Field[x, y] < 0 || drawing_Field[x, y] > 10))
                 {
-                    // el_con_points[line_counter][new Point((el_pos[move].X + 3) * sc, (el_pos[move].Y + 1) * sc)] = e.Location;
-                    drawline(el_pos[move], el_pos[drawing_Field[x, y]], line_counter);
+                  
+                    //news
+                    if (move > 10 && drawing_Field[x, y] < 0)
+                       drawline(arr_pos[indexpair[move]].Location, arr_trans[indexpair[drawing_Field[x, y]]].Location, line_counter);
+                    else if (move < 0 && drawing_Field[x, y] > 10)
+                        drawline(arr_trans[indexpair[move]].Location, arr_pos[indexpair[drawing_Field[x, y]]].Location, line_counter);
+   
+                   
+                   
+                    
                     drlin = false;
                 }
                 DrawToBuffer(grafx.Graphics);
@@ -353,7 +381,7 @@ namespace PetriNets
         {
          //   System.Drawing.Drawing2D.GraphicsPath p = new System.Drawing.Drawing2D.GraphicsPath();
             grafx.Render(e.Graphics);
-            e.Graphics.DrawString("" + field_Size, Font, Brushes.Red, 100, 100);
+          //  e.Graphics.DrawString("" + field_Size, Font, Brushes.Red, 100, 100);
        
         }
         
@@ -367,27 +395,26 @@ namespace PetriNets
                         drawing_Field[i, j] = 0;
                     }
                 }
-
-            foreach (KeyValuePair<int, Point> kvp in el_pos)
+//news
+            foreach (Position p in arr_pos)
             {
-                if (kvp.Key > 10)
-                {
-                    for (int i = kvp.Value.X; i < kvp.Value.X + 3; i++)
-                        for (int j = kvp.Value.Y; j < kvp.Value.Y + 3; j++)
+                 for (int i = p.Location.X; i < p.Location.X + 3; i++)
+                        for (int j = p.Location.Y; j < p.Location.Y + 3; j++)
                         {
                             // if(drawing_Field[i, j] == 0)
-                            drawing_Field[i, j] = kvp.Key;
+                            drawing_Field[i, j] = p.Fieldnumber;
                         }
-                }
-                else if (kvp.Key < 0)
-                {
-
-                    for (int i = kvp.Value.Y; i < kvp.Value.Y + 5; i++)
-                    {
-                        drawing_Field[kvp.Value.X, i] = kvp.Key;
-                    }
-                }
             }
+
+            foreach (Transition t in arr_trans)
+            {
+                 for (int i = t.Location.Y; i < t.Location.Y + 5; i++)
+                    {
+                        drawing_Field[t.Location.X, i] = t.Fieldnumber;
+                    }
+            }
+
+
         }
 
         private bool test_free(int x, int y, int obj)
@@ -438,12 +465,12 @@ namespace PetriNets
             //
             if (drawing_Field[from.X, from.Y] > 10 && drawing_Field[to.X, to.Y] < 0)
             {
-                ((Position)arr_pos[drawing_Field[from.X, from.Y] - 11]).addIn(arr_trans[indexpair[drawing_Field[to.X, to.Y]]]);
+                ((Position)arr_pos[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_trans[indexpair[drawing_Field[to.X, to.Y]]]);
             }
 
             if (drawing_Field[from.X, from.Y] < 0 && drawing_Field[to.X, to.Y] > 10)
             {
-                ((Transition)arr_trans[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_pos[drawing_Field[to.X, to.Y] - 11]);
+                ((Transition)arr_trans[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_pos[indexpair[drawing_Field[to.X, to.Y]]]);
             }
             clearline();
             reconnect_nodes();
@@ -454,7 +481,6 @@ namespace PetriNets
         {
             
             drawing_Field = new int[field_Size, field_Size];
-            el_pos = new System.Collections.Generic.Dictionary<int, Point>();
             el_con_points = new List<Dictionary<Point, Point>>();
             el_con_points.Add(new Dictionary<Point, Point>());
             lines = new Lines(sc);
@@ -462,7 +488,6 @@ namespace PetriNets
             indexpair = new Dictionary<int, int>();
             arr_pos = new List<Position>();
             arr_trans = new List<Transition>();
-            positions = new List<int>();
 
             el_num = new int[5];
             el_num[1] = 10;
@@ -505,11 +530,9 @@ namespace PetriNets
                 serializedinfo.Add(indexpair);
                 serializedinfo.Add(drawing_Field);
                 serializedinfo.Add(el_con_points);
-                serializedinfo.Add(el_pos);
-                serializedinfo.Add(positions);
                 serializedinfo.Add(el_num);
                 serializedinfo.Add(line_counter);
-                if (arr_trans.Count != 0) { serializedinfo.Add(arr_trans[0].getIndex()); } //вот это не работает а надо
+                if (arr_trans.Count != 0) { serializedinfo.Add(Transition.Id_cntr); } //вот это не работает а надо
 
                 bf.Serialize(fs, serializedinfo);
 
@@ -537,11 +560,9 @@ namespace PetriNets
                 indexpair = (Dictionary<int, int>)serializedinfo[2];
                 drawing_Field = (int[,])serializedinfo[3];
                 el_con_points = (List<Dictionary<Point, Point>>)serializedinfo[4];
-                el_pos = (Dictionary<int, Point>)serializedinfo[5];
-                positions = (List<int>)serializedinfo[6];
-                el_num = (int[])serializedinfo[7];
-                line_counter = (int)serializedinfo[8];
-                if (arr_trans.Count != 0) { arr_trans[0].setIndex((int)serializedinfo[9]); }//и это тоже не работает
+                el_num = (int[])serializedinfo[5];
+                line_counter = (int)serializedinfo[6];
+                if (arr_trans.Count != 0) { Transition.Id_cntr = (int)serializedinfo[7]; }//и это тоже не работает
                 DrawToBuffer(grafx.Graphics);
                 this.splitContainer1.Panel2.Invalidate();
                 //this.Text += arr_pos[0].Tokens;
@@ -552,7 +573,7 @@ namespace PetriNets
 
         private void clean_Click(object sender, EventArgs e)
         {
-            if (arr_trans.Count != 0) { arr_trans[0].setIndex(0); }
+            if (arr_trans.Count != 0) { Transition.Id_cntr = 0; }
             clean_field();
             DrawToBuffer(grafx.Graphics);
             this.splitContainer1.Panel2.Invalidate();
@@ -570,37 +591,95 @@ namespace PetriNets
             //            e.Graphics.DrawString("" + drawing_Field[i, j], Font, Brushes.Blue, sc * i, sc * j);
             //    }
             // e.Graphics.DrawString("" + System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size.Width, Font, Brushes.Blue, sc * 20, sc * 20);   
-            foreach (KeyValuePair<int, Point> kvp in el_pos)
-            {
-                if (kvp.Key > 10)
-                {
-                    g.DrawEllipse((kvp.Key == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * kvp.Value.X, sc * kvp.Value.Y, sc * 3, sc * 3);
-                    g.DrawString("" + positions[kvp.Key - 11], Font, (kvp.Key == selected) ? Brushes.HotPink : Brushes.Black, sc * (kvp.Value.X + 1), sc * (kvp.Value.Y + 1));
-                }
-                else if (kvp.Key % (-2) == -1)
-                {
-                    g.FillRectangle((kvp.Key == selected) ? sel_br : Brushes.Black, sc * kvp.Value.X, sc * kvp.Value.Y, sc, sc * 5);
-                }
-                else if (kvp.Key < 0 && kvp.Key % (-2) == 0)
-                {
-                    g.DrawRectangle((kvp.Key == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * kvp.Value.X, sc * kvp.Value.Y, sc, sc * 5);
-                }
-            }
-            foreach (Dictionary<Point, Point> lin in el_con_points)
-            {
-                foreach (KeyValuePair<Point, Point> points in lin)
-                {
-                    Pen p = new Pen(Brushes.Green, 2);
-                    if (points.Value.X != 0)
-                        g.DrawLine(p, points.Key, points.Value);
-                    //Console.Write("From: {0:d} : {1:d} To: {2:d} : {3:d} \n", points.Key.X, points.Key.Y, points.Value.X, points.Value.Y);
-                }
-            }
+                   foreach (Position p in arr_pos)
+                    {
+                        g.DrawEllipse((p.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * p.Location.X, sc * p.Location.Y, sc * 3, sc * 3);
+                        g.DrawString("" + p.Tokens, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), sc * (p.Location.Y + 1));
+                        g.DrawString("p" + p.ID, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
+                    }
+           
+                    foreach (Transition t in arr_trans)
+                    {
+                        if (t.Fieldnumber % (-2) == -1)
+                        {
+                            g.FillRectangle((t.Fieldnumber == selected) ? sel_br : Brushes.Black, sc * t.Location.X, sc * t.Location.Y, sc, sc * 5);
+                        }
+                        else
+                        {
+                            g.DrawRectangle((t.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * t.Location.X, sc * t.Location.Y, sc, sc * 5);
+                        }
+                        g.DrawString("t" + t.ID, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
+                
+                    }
+                    foreach (Dictionary<Point, Point> lin in el_con_points)
+                    {
+                        foreach (KeyValuePair<Point, Point> points in lin)
+                        {
+                            Pen p = new Pen(Brushes.Green, 2);
+                            if (points.Value.X != 0)
+                                g.DrawLine(p, points.Key, points.Value);
+                            //Console.Write("From: {0:d} : {1:d} To: {2:d} : {3:d} \n", points.Key.X, points.Key.Y, points.Value.X, points.Value.Y);
+                        }
+                    }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void t_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+            if (selected != 0)
+            {
+                if (selected > 10)
+                {
+                    Position p = arr_pos[indexpair[selected]];
+                    arr_pos.Remove(p);
+                    int i = 0;
+                    foreach (Position pos in arr_pos)
+                    {
+                        pos.ID = i;
+                        pos.Tokens = arr_pos[i++].Tokens;
+                    }
+                    indexpair.Remove(selected);
+                    foreach (Position pos in arr_pos)
+                    {
+                        indexpair[pos.Fieldnumber] = pos.ID;
+                    }
+                    Position.Id_cntr--;
+                    //el_num[1]--;
+                   // el_pos.
+                }
+
+                if (selected < 0)
+                {
+                    Transition t = arr_trans[indexpair[selected]];
+                    arr_trans.Remove(t);
+                    int i = 0;
+                    foreach (Transition trans in arr_trans)
+                    {
+                        trans.ID = i;
+                    }
+                    indexpair.Remove(selected);
+                    foreach (Transition trans in arr_trans)
+                    {
+                        indexpair[trans.Fieldnumber] = trans.ID;
+                    }
+                    Position.Id_cntr--;
+                    //el_num[1]--;
+                    // el_pos.
+                }
+            }
+
+            DrawToBuffer(grafx.Graphics);
+            this.splitContainer1.Panel2.Invalidate();
+           
         }
     }
 }

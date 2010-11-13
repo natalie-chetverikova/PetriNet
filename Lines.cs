@@ -342,8 +342,8 @@ namespace PetriNets
                     }
                 points.Add(outp[f], a1);
                 if (!a1.Equals(a0)) points.Add(a1, a0);
-                points.Add(a0, a);
-                points.Add(a, b);
+                if (!a0.Equals(a)) points.Add(a0, a);
+                if (!a.Equals(b)) points.Add(a, b);
                 if (!b.Equals(b0)) points.Add(b, b0);
                 if (!b0.Equals(b1)) points.Add(b0, b1);
                 points.Add(b1, inp[t]);
