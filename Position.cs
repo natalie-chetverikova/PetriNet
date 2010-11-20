@@ -25,12 +25,16 @@ namespace PetriNets
         public int Fieldnumber
         { get; set; }
 
+        public List<int> Lin
+        { get; set; }
+
         public Position(int fieldnum)
         {
             this.Fieldnumber = fieldnum;   
             this.ID = Id_cntr++;
             Tokens = 0;
-            DictOfIn = new Dictionary<Transition, int>();            
+            DictOfIn = new Dictionary<Transition, int>();
+            Lin = new List<int>();
         }
 
         public void addIn(Transition o)
