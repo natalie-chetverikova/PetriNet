@@ -44,6 +44,7 @@ namespace PetriNets
         Brush sel_br = Brushes.Indigo;
         //Edited
         int selected = 0;
+        Point selected_point = new Point(1,1);
 
         public Form1()
         {
@@ -111,7 +112,6 @@ namespace PetriNets
                 arr_pos[indexpair[drawing_Field[x, y]]].Tokens++;
             }
         }
-
         //   void Panel2_MouseEnter(object sender, EventArgs e)
         //   {
         //       throw new NotImplementedException();
@@ -189,7 +189,27 @@ namespace PetriNets
                         }
                 }
             }
-
+            if (drawing_Field[x, y] ==0)
+            {
+                bool sel = false;
+                foreach (Dictionary<Point, Point>   dline  in el_con_points)
+                {
+                    foreach (KeyValuePair<Point, Point> kvpline in dline)
+                    {
+                        Point p1 = lines.mo(kvpline.Key);
+                        Point p2 = lines.mo(kvpline.Value);
+                        if (x >= (Math.Min(p1.X, p2.X) - 1)  && x <= (Math.Max(p1.X, p2.X) + 1))
+                        {
+                            if( y >= (Math.Min(p1.Y, p2.Y) - 1) && y <= (Math.Max(p1.Y, p2.Y) + 1))
+                            {
+                                selected_point = kvpline.Key; sel = true;
+                            }
+                        }
+                    }
+                }
+                if (!sel) selected_point = new Point(1, 1);
+            }
+            
         }
 
         void Panel2_MouseMove(object sender, MouseEventArgs e)
@@ -198,16 +218,17 @@ namespace PetriNets
             int ym = e.Y / sc;
             if (down && xm > 0 && ym > 0 && !buttons[4].Focused)
             {
-                if (move != 0)
+                if (move != 0 && move != 1)
                 {   //news
-                    if(move > 10)
+                    if (move > 10)
                         arr_pos[indexpair[move]].Location = new Point(xm, ym);
                     else
                         arr_trans[indexpair[move]].Location = new Point(xm, ym);
 
                  
                     clearline();
-                    reconnect_nodes();
+                    updateTable();
+                    reconnect_nodes(move);
                     DrawToBuffer(grafx.Graphics);
                     this.splitContainer1.Panel2.Invalidate();
                     istomove = true;
@@ -231,8 +252,7 @@ namespace PetriNets
                 istomove = false;
             }
         }
-
-
+        //ИСПРАВИТЬ ЭТОТ БЛЯ МЕТОД
         private void clearline()
         {
             /*        foreach(KeyValuePair<Point,Point> dic in el_con_points[line])
@@ -249,47 +269,65 @@ namespace PetriNets
                 }
         }
 
-
-        private void reconnect_nodes()
-        {
-            line_counter = 1;
-            el_con_points.Clear();
-            //    el_con_points = new List<Dictionary<Point,Point>>();
-            el_con_points.Add(new Dictionary<Point, Point>());
-            foreach (Position pos in arr_pos)
+        private void reconnect_nodes(int which)
+        {//on the base of matrixes recreate connections between nodes
+            if (which > 10)
             {
-                foreach (KeyValuePair<Transition, int> inp in pos.DictOfIn)
+                foreach (int line in arr_pos[indexpair[which]].Lin)
                 {
-                    Transition p = inp.Key;
-                    int count = inp.Value;
-                    while (count-- > 0)
+                    Object from = arr_pos[indexpair[which]], to = null;
+                    foreach (Transition t in arr_trans)
                     {
-                        //news
-                        lines.connect_two_points(pos.Location, p.Location);
-                        //
-                        el_con_points.Add(new Dictionary<Point, Point>());
-                        el_con_points[line_counter++] = lines.Points;
+                        if (t.Lin.Contains(line))
+                        {
+                            to = t;
+                        }
                     }
+                    if (!((Position)from).DictOfIn.ContainsKey((Transition)to))
+                    {
+                        Object t = from;
+                        from = to;
+                        to = t;
+                        lines.connect_two_points(((Transition)from).Location, ((Position)to).Location);
+
+                    }
+                    else
+                    {
+                        lines.connect_two_points(((Position)from).Location, ((Transition)to).Location);
+                    }
+                    el_con_points[line] = lines.Points;
+                }
+
+            }
+            else
+            {
+                foreach (int i in arr_trans[indexpair[which]].Lin)
+                {
+                    Object from = arr_trans[indexpair[which]], to = null;
+                    foreach (Position p in arr_pos)
+                    {
+                        if (p.Lin.Contains(i))
+                        {
+                            to = p;
+                        }
+                    }
+
+                    if (!((Transition)from).DictOfIn.ContainsKey((Position)to))
+                    {
+                        Object t = from;
+                        from = to;
+                        to = t;
+                        lines.connect_two_points(((Position)from).Location, ((Transition)to).Location);
+
+                    }
+                    else
+                    {
+                        lines.connect_two_points(((Transition)from).Location, ((Position)to).Location);
+
+                    }
+                    el_con_points[i] = lines.Points;
                 }
             }
-
-            foreach (Transition tr in arr_trans)
-            {
-                foreach (KeyValuePair<Position, int> inp in tr.DictOfIn)
-                {
-                    Position p = inp.Key;
-                    int count = inp.Value;
-                    while (count-- > 0)
-                    {
-                        //news
-                        lines.connect_two_points(tr.Location, p.Location);
-                        //
-                        el_con_points.Add(new Dictionary<Point, Point>());
-                        el_con_points[line_counter++] = lines.Points;
-                    }
-                }
-            }
-            //on the base of matrixes recreate connections between nodes
         }
 
         void Panel2_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -358,10 +396,7 @@ namespace PetriNets
                        drawline(arr_pos[indexpair[move]].Location, arr_trans[indexpair[drawing_Field[x, y]]].Location, line_counter);
                     else if (move < 0 && drawing_Field[x, y] > 10)
                         drawline(arr_trans[indexpair[move]].Location, arr_pos[indexpair[drawing_Field[x, y]]].Location, line_counter);
-   
-                   
-                   
-                    
+
                     drlin = false;
                 }
                 DrawToBuffer(grafx.Graphics);
@@ -463,18 +498,24 @@ namespace PetriNets
             //    el_con_points[linenum] = lines.Points;
             //}
             //
+            clearline();
+            el_con_points.Add(new Dictionary<Point, Point>());
+            line_counter++;
             if (drawing_Field[from.X, from.Y] > 10 && drawing_Field[to.X, to.Y] < 0)
             {
                 ((Position)arr_pos[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_trans[indexpair[drawing_Field[to.X, to.Y]]]);
-            }
+                arr_pos[indexpair[drawing_Field[from.X, from.Y]]].Lin.Add(line_counter);
+                arr_trans[indexpair[drawing_Field[to.X, to.Y]]].Lin.Add(line_counter);
+             }
 
             if (drawing_Field[from.X, from.Y] < 0 && drawing_Field[to.X, to.Y] > 10)
             {
                 ((Transition)arr_trans[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_pos[indexpair[drawing_Field[to.X, to.Y]]]);
+                arr_trans[indexpair[drawing_Field[from.X, from.Y]]].Lin.Add(line_counter);
+                arr_pos[indexpair[drawing_Field[to.X, to.Y]]].Lin.Add(line_counter);
             }
-            clearline();
-            reconnect_nodes();
-                      
+            reconnect_nodes(drawing_Field[from.X, from.Y]);   
+            //reconnect_nodes(0);   
         }
         
         private void clean_field()
@@ -583,14 +624,14 @@ namespace PetriNets
         {
 
             grafx.Graphics.FillRectangle(Brushes.White, 0, 0, this.splitContainer1.Panel2.Width, this.splitContainer1.Panel2.Height);
-            //Test part
+          //  Test part
             //for (int i = 0; i < field_Size; i++)
             //    for (int j = 0; j < field_Size; j++)
             //    {
             //        if (drawing_Field[i, j] != 0)
-            //            e.Graphics.DrawString("" + drawing_Field[i, j], Font, Brushes.Blue, sc * i, sc * j);
+            //            g.DrawString("" + drawing_Field[i, j], Font, Brushes.Blue, sc * i, sc * j);
             //    }
-            // e.Graphics.DrawString("" + System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size.Width, Font, Brushes.Blue, sc * 20, sc * 20);   
+            // g.DrawString("" + System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size.Width, Font, Brushes.Blue, sc * 20, sc * 20);   
                    foreach (Position p in arr_pos)
                     {
                         g.DrawEllipse((p.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * p.Location.X, sc * p.Location.Y, sc * 3, sc * 3);
@@ -615,9 +656,11 @@ namespace PetriNets
                     {
                         foreach (KeyValuePair<Point, Point> points in lin)
                         {
-                            Pen p = new Pen(Brushes.Green, 2);
+                           // Pen p = new Pen(Brushes.Green, 2);
+                            bool flag = (points.Key == selected_point); // (Math.Abs(points.Value.X - selected_point.X) < 20) && (Math.Abs(points.Value.Y - selected_point.Y) < 20);   
                             if (points.Value.X != 0)
-                                g.DrawLine(p, points.Key, points.Value);
+                                g.DrawLine(flag ? new Pen(sel_br, 2) : new Pen(Brushes.Green, 2), points.Key, points.Value);
+                           
                             //Console.Write("From: {0:d} : {1:d} To: {2:d} : {3:d} \n", points.Key.X, points.Key.Y, points.Value.X, points.Value.Y);
                         }
                     }

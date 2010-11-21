@@ -23,6 +23,9 @@ namespace PetriNets
         public Dictionary<Position, int> DictOfIn
         { get; set; }
 
+        public List<int> Lin
+        { get; set; }
+
         public System.Drawing.Point Location
         { get; set; }
 
@@ -43,6 +46,7 @@ namespace PetriNets
                 Type = "time";
                 Time = 1; //потом поменять
             }
+            Lin = new List<int>();
         }
 
         public void addIn(Position o)
