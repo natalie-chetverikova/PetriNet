@@ -14,6 +14,8 @@ namespace PetriNets
 
         public int ID
         { get; set; }
+        public string Name
+        { get; set; }
         public int Tokens
         { get; set; }
         public Dictionary<Transition, int> DictOfIn
@@ -32,6 +34,7 @@ namespace PetriNets
         {
             this.Fieldnumber = fieldnum;   
             this.ID = Id_cntr++;
+            Name = "m" + ID;
             Tokens = 0;
             DictOfIn = new Dictionary<Transition, int>();
             Lin = new List<int>();

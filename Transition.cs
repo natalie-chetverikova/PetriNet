@@ -14,6 +14,8 @@ namespace PetriNets
         { get; set; }
         public int ID
         { get; set; }
+        public string Name
+        { get; set; }
         public int Fieldnumber
         { get; set; }
         public string Type
@@ -32,6 +34,7 @@ namespace PetriNets
         public Transition(int fieldnumber)
         {
             ID = Id_cntr++;
+            Name = "t" + ID;
             this.Fieldnumber = fieldnumber;
             DictOfIn = new Dictionary<Position, int>();
             //мгновенный

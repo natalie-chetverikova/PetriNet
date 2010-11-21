@@ -207,7 +207,7 @@ namespace PetriNets
             foreach (int[] mark in dict_mark.Keys)
             {
                 equals = true;
-                for (int i = 0; i < mark.arr_pos.Countgth; i++)
+                for (int i = 0; i < mark.Length; i++)
                 {
                     equals &= (mark[i]==newmark[i]);                    
                 }
@@ -223,7 +223,7 @@ namespace PetriNets
              for (int j = 0; j < dict_mark.Count; j++)
              {
                  equals = true;
-                 for (int i = 0; i < dict_mark.ElementAt(j).Key.arr_pos.Countgth; i++)
+                 for (int i = 0; i < dict_mark.ElementAt(j).Key.Length; i++)
                  {
                      equals &= (dict_mark.ElementAt(j).Key[i] == newmark[i]);
                  }
