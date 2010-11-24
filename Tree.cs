@@ -25,9 +25,6 @@ namespace PetriNets
         private int tier = 1;
         int[] currmark;
         int[] newmark;
-        private List<string[]> mmt;
-        private List<int[]> mrks;
-        
         
         public Tree(List<Position> arr_pos, List<Transition> arr_trans)
     {
@@ -42,6 +39,7 @@ namespace PetriNets
             this.Load += new EventHandler(TableHandler_Load);
 
     }
+
         private void TableHandler_Load(System.Object sender, System.EventArgs e)
         {
             //общие параметры внешнего вида для табличек
@@ -99,7 +97,7 @@ namespace PetriNets
                 for (int j = 0; j < arr_trans.Count; j++)
                 {
                     choice = false;
-                    for (int i = 0; i < arr_pos.Count; i++)
+                    for (int i = 0; i < currmark.Length; i++)
                     {
                         if (currmark[i] * di[j, i] != 0 && currmark[i] >= di[j, i])
                         {
@@ -111,7 +109,7 @@ namespace PetriNets
                     if (choice)
                     {
                         //новая маркировка
-                        for (int q = 0; q < arr_pos.Count; q++)
+                        for (int q = 0; q < currmark.Length; q++)
                         {
                             newmark[q] = currmark[q] - di[j,q] + dq[j,q];
                         }
@@ -137,29 +135,30 @@ namespace PetriNets
                         {
                             gridrow[4] += "" + i + ", ";
                         }
-                        grid.Rows[mark_ctr].HeaderCell.Value = "M" + getmarkNumber(dict_mark, newmark);
-                        mark_ctr++;
-                        branch++;
+                        
                         //-------
                         if (!containsKey(dict_mark, newmark))
                         {
                             //dict_mark.Add(mark_ctr,newmark);
                             addmark(dict_mark, tier+1, newmark);
                             gridrow[5] = "промежуточная";
+                            
                         }
                         else
                         {
-                           gridrow[5] = "конечная";  
+                           gridrow[5] = "конечная"; 
+ 
                         }
-                        grid.Rows.Add(gridrow);
-                        //м-м-т для графа
-                        mkListsforGraph(currmark, newmark, j);
-
+                       grid.Rows.Add(gridrow);
+                       grid.Rows[mark_ctr].HeaderCell.Value = "M" + getmarkNumber(dict_mark, newmark);                        
+                        
+                        mark_ctr++;
+                        branch++;                        
                     }
                 }
 
                 try{
-                    for (int q = 0; q < arr_pos.Count; q++)
+                    for (int q = 0; q < currmark.Length; q++)
                     {
                         currmark[q] = (dict_mark.ElementAt(mark_ptr).Key)[q];
                     }
@@ -172,28 +171,15 @@ namespace PetriNets
                     end = true;
                 }
                 //if (tier == 10) break;
-            };
-            //список маркировок для графа
-            mrks = dict_mark.Keys.ToList();
+            };           
 
         }
-
-        //список: маркировка-маркировка-переход для графа
-        //переходы по ид-шнику
-        private void mkListsforGraph(int[] currmark, int[] newmark, int j)
-        {
-            string[] buf = new string[3];
-            buf[0] = ""+getmarkNumber(dict_mark, currmark);
-            buf[1] = ""+getmarkNumber(dict_mark, newmark);
-            buf[2] = arr_trans[j].Name;
-            mmt.Add(buf);
-        }
-
+        
         //добавление маркировки в словарь
         private void addmark(Dictionary<int[], int> dict_mark, int tier, int[] newmark)
         {
-            int[] buf = new int[newmark.Count()];
-            for (int i = 0; i < buf.Count(); i++)
+            int[] buf = new int[newmark.Length];
+            for (int i = 0; i < buf.Length; i++)
             {
                 buf[i] = newmark[i];
             }
