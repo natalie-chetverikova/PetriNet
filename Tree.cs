@@ -25,7 +25,7 @@ namespace PetriNets
         private int tier = 1;
         int[] currmark;
         int[] newmark;
-        private List<int[]> mmt;
+        private List<string[]> mmt;
         private List<int[]> mrks;
         
         
@@ -182,10 +182,10 @@ namespace PetriNets
         //переходы по ид-шнику
         private void mkListsforGraph(int[] currmark, int[] newmark, int j)
         {
-            int[] buf = new int[3];
-            buf[0] = getmarkNumber(dict_mark, currmark);
-            buf[1] = getmarkNumber(dict_mark, newmark);
-            buf[2] = j;
+            string[] buf = new string[3];
+            buf[0] = ""+getmarkNumber(dict_mark, currmark);
+            buf[1] = ""+getmarkNumber(dict_mark, newmark);
+            buf[2] = arr_trans[j].Name;
             mmt.Add(buf);
         }
 
