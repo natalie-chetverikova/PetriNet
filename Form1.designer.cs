@@ -47,6 +47,8 @@
             this.open = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.delete = new System.Windows.Forms.ToolStripButton();
+            this.graph = new System.Windows.Forms.ToolStripButton();
             this.P = new System.Windows.Forms.Button();
             this.t = new System.Windows.Forms.Button();
             this.tt = new System.Windows.Forms.Button();
@@ -54,7 +56,7 @@
             this.cursor = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.delete = new System.Windows.Forms.ToolStripButton();
+            this.tree = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -83,7 +85,9 @@
             this.open,
             this.toolStripSeparator9,
             this.toolStripSeparator10,
-            this.delete});
+            this.delete,
+            this.graph,
+            this.tree});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(784, 25);
@@ -198,6 +202,27 @@
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
             // 
+            // delete
+            // 
+            this.delete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.delete.Image = ((System.Drawing.Image)(resources.GetObject("delete.Image")));
+            this.delete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.delete.Name = "delete";
+            this.delete.Size = new System.Drawing.Size(23, 22);
+            this.delete.Text = "DeletButton";
+            this.delete.ToolTipText = "Удалить объект";
+            this.delete.Click += new System.EventHandler(this.delete_Click);
+            // 
+            // graph
+            // 
+            this.graph.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.graph.Image = ((System.Drawing.Image)(resources.GetObject("graph.Image")));
+            this.graph.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.graph.Name = "graph";
+            this.graph.Size = new System.Drawing.Size(23, 22);
+            this.graph.Text = "graph";
+            this.graph.Click += new System.EventHandler(this.graph_Click);
+            // 
             // P
             // 
             this.P.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -294,16 +319,15 @@
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             // 
-            // delete
+            // tree
             // 
-            this.delete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.delete.Image = ((System.Drawing.Image)(resources.GetObject("delete.Image")));
-            this.delete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.delete.Name = "delete";
-            this.delete.Size = new System.Drawing.Size(23, 22);
-            this.delete.Text = "DeletButton";
-            this.delete.ToolTipText = "Удалить объект";
-            this.delete.Click += new System.EventHandler(this.delete_Click);
+            this.tree.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tree.Image = ((System.Drawing.Image)(resources.GetObject("tree.Image")));
+            this.tree.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tree.Name = "tree";
+            this.tree.Size = new System.Drawing.Size(23, 22);
+            this.tree.Text = "tree";
+            this.tree.Click += new System.EventHandler(this.tree_Click_1);
             // 
             // Form1
             // 
@@ -353,6 +377,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripButton delete;
+        private System.Windows.Forms.ToolStripButton graph;
+        private System.Windows.Forms.ToolStripButton tree;
 
     }
 }

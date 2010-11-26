@@ -42,6 +42,7 @@ namespace PetriNets
         private BufferedGraphics grafx;
 
         Brush sel_br = Brushes.Indigo;
+        Brush fishkabrush = Brushes.Yellow;
         //Edited
         int selected = 0;
         Point selected_point = new Point(1,1);
@@ -604,6 +605,12 @@ namespace PetriNets
                 el_num = (int[])serializedinfo[5];
                 line_counter = (int)serializedinfo[6];
                 if (arr_trans.Count != 0) { Transition.Id_cntr = (int)serializedinfo[7]; }//и это тоже не работает
+                updateTable();
+                lines.Field_matrix = drawing_Field;
+                foreach (Position p in arr_pos)
+                {
+                    reconnect_nodes(p.Fieldnumber);
+                }
                 DrawToBuffer(grafx.Graphics);
                 this.splitContainer1.Panel2.Invalidate();
                 //this.Text += arr_pos[0].Tokens;
@@ -632,11 +639,47 @@ namespace PetriNets
             //            g.DrawString("" + drawing_Field[i, j], Font, Brushes.Blue, sc * i, sc * j);
             //    }
             // g.DrawString("" + System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size.Width, Font, Brushes.Blue, sc * 20, sc * 20);   
-                   foreach (Position p in arr_pos)
+            
+                                   
+            foreach (Position p in arr_pos)
                     {
+                        
                         g.DrawEllipse((p.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * p.Location.X, sc * p.Location.Y, sc * 3, sc * 3);
-                        g.DrawString("" + p.Tokens, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), sc * (p.Location.Y + 1));
-                        g.DrawString("p" + p.ID, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
+                        switch (p.Tokens)
+                        {
+                            case 0: break;
+                            case 1:
+                                {
+                                    g.FillEllipse(fishkabrush, sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc); 
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    g.FillEllipse(fishkabrush, sc * p.Location.X + sc/2, sc * p.Location.Y + sc, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc / 2, sc * p.Location.Y + sc, sc, sc);
+                                    g.FillEllipse(fishkabrush, sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y + sc, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y + sc, sc, sc);
+                                    //g.DrawArc(new Pen(Brushes.Salmon, 3), sc * p.Location.X + sc/2, sc * p.Location.Y + sc/ 2 + 2, sc * 2, sc *2, 20f, 140f);
+                                    //g.DrawLine(new Pen(Brushes.Black), sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y, sc * p.Location.X + sc / 2, sc * p.Location.Y - sc);
+                                    //g.DrawLine(new Pen(Brushes.Black), sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y, sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y - sc);
+                                    //g.DrawLine(new Pen(Brushes.Black), sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y, sc * p.Location.X + 5 * sc / 2, sc * p.Location.Y - sc);
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    g.FillEllipse(fishkabrush, sc * p.Location.X + sc / 2, sc * p.Location.Y + sc /2 + 1, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc / 2, sc * p.Location.Y + sc /2 + 1, sc, sc);
+                                    g.FillEllipse(fishkabrush, sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y + sc /2 + 1, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + 3 * sc / 2, sc * p.Location.Y + sc /2 + 1, sc, sc);
+                                    g.FillEllipse(fishkabrush, sc * p.Location.X + sc, sc * p.Location.Y + 3 * sc / 2 + 1, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc, sc * p.Location.Y + 3*sc/2 + 1, sc, sc);
+                                    break;
+                                }
+                            default: g.DrawString("" + p.Tokens, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), sc * (p.Location.Y + 1));
+                                break;
+                        }
+                        g.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
                     }
            
                     foreach (Transition t in arr_trans)
@@ -649,7 +692,7 @@ namespace PetriNets
                         {
                             g.DrawRectangle((t.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * t.Location.X, sc * t.Location.Y, sc, sc * 5);
                         }
-                        g.DrawString("t" + t.ID, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
+                        g.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
                 
                     }
                     foreach (Dictionary<Point, Point> lin in el_con_points)
@@ -723,6 +766,16 @@ namespace PetriNets
             DrawToBuffer(grafx.Graphics);
             this.splitContainer1.Panel2.Invalidate();
            
+        }
+
+        private void graph_Click(object sender, EventArgs e)
+        {
+            new Graphs(arr_pos, arr_trans).ShowDialog(this);
+        }
+
+        private void tree_Click_1(object sender, EventArgs e)
+        {
+            new Tree(arr_pos, arr_trans).ShowDialog(this);
         }
     }
 }

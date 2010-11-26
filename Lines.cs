@@ -338,9 +338,10 @@ namespace PetriNets
                         }
                     }
                     if (!points.ContainsKey(outp)) points.Add(outp, a1);
-                    if (!points.ContainsKey(a1)) points.Add(a1, a0);
-                    if (!points.ContainsKey(a0)) points.Add(a0, a);
+                    if (!points.ContainsKey(a1) && !a1.Equals(a)) points.Add(a1, a0);
+                    if (!points.ContainsKey(a0) && !a0.Equals(a)) points.Add(a0, a);
                 if (!points.ContainsKey(a)) points.Add(a, b);
+                //else points.Add(a, b);
                 if (!points.ContainsKey(b)) points.Add(b, b0);
                 if (!points.ContainsKey(b0)) points.Add(b0, b1);
                 if (!points.ContainsKey(b1)) points.Add(b1, inp);

@@ -8,7 +8,7 @@ using System.Drawing;
 namespace PetriNets
 {
    
-    class Tree : Form
+    public class Tree : Form
     {        
         private List<Transition> arr_trans;
         private List<Position> arr_pos;
@@ -150,8 +150,8 @@ namespace PetriNets
  
                         }
                        grid.Rows.Add(gridrow);
-                       grid.Rows[mark_ctr].HeaderCell.Value = "M" + getmarkNumber(dict_mark, newmark);                        
-                        
+                       grid.Rows[mark_ctr].HeaderCell.Value = "M" + getmarkNumber(dict_mark, currmark) + " -> M" + getmarkNumber(dict_mark, newmark);
+   
                         mark_ctr++;
                         branch++;                        
                     }
