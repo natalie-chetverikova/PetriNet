@@ -76,6 +76,7 @@ namespace PetriNets
             el_num[2] = -1;
             el_num[3] = -2;
             this.Text = "Petri Panda Project";
+            nodname.Visible = false;
 
             context = BufferedGraphicsManager.Current;
             context.MaximumBuffer = new Size(this.splitContainer1.Panel2.Width + 1, this.splitContainer1.Panel2.Height + 1);
@@ -639,7 +640,7 @@ namespace PetriNets
             //            g.DrawString("" + drawing_Field[i, j], Font, Brushes.Blue, sc * i, sc * j);
             //    }
             // g.DrawString("" + System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size.Width, Font, Brushes.Blue, sc * 20, sc * 20);   
-            
+            bool txtbox = false;
                                    
             foreach (Position p in arr_pos)
                     {
@@ -651,7 +652,7 @@ namespace PetriNets
                             case 1:
                                 {
                                     g.FillEllipse(fishkabrush, sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc);
-                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc); 
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc);
                                     break;
                                 }
                             case 2:
@@ -680,7 +681,17 @@ namespace PetriNets
                                 break;
                         }
                         g.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
-                    }
+                        //qw
+                        if (p.Fieldnumber == selected)
+                        {
+                            txtbox = true;
+                            this.nodname.Text = p.Name;
+                            this.nodname.Visible = true;
+                            this.nodname.Focus();
+                        }  
+                //qw
+            
+            }
            
                     foreach (Transition t in arr_trans)
                     {
@@ -693,7 +704,18 @@ namespace PetriNets
                             g.DrawRectangle((t.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * t.Location.X, sc * t.Location.Y, sc, sc * 5);
                         }
                         g.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
-                
+                        //qw
+                        if (t.Fieldnumber == selected)
+                        {
+                            this.nodname.Text = t.Name;
+                            txtbox = true;
+                            this.nodname.Visible = true;
+                            this.nodname.Focus();
+                        }
+                        
+                        if (!txtbox) { this.nodname.Visible = false; }
+                        //qw
+                       
                     }
                     foreach (Dictionary<Point, Point> lin in el_con_points)
                     {
@@ -770,12 +792,67 @@ namespace PetriNets
 
         private void graph_Click(object sender, EventArgs e)
         {
-            new Graphs(arr_pos, arr_trans).ShowDialog(this);
+            //new Graphs(arr_pos, arr_trans).ShowDialog(this);
         }
 
         private void tree_Click_1(object sender, EventArgs e)
         {
             new Tree(arr_pos, arr_trans).ShowDialog(this);
+        }
+
+        private void changename(Graphics g, string newname)
+        {
+            if (selected != 0)
+            {
+                bool samename = false;
+                if (selected > 10)
+                {
+                    Position p = arr_pos[indexpair[selected]];
+                    samename = false;
+                    foreach (Position pp in arr_pos)
+                    {
+                        if (newname.Equals(pp.Name)) { samename = true; break; }
+                    }
+                    if (!samename) { p.Name = newname; }
+                    g.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
+                }
+
+                if (selected < 0)
+                {
+                    Transition t = arr_trans[indexpair[selected]];
+                    samename = false;
+                    foreach (Transition tt in arr_trans)
+                    {
+                        if (newname.Equals(tt.Name)) { samename = true; break; }
+                    }
+                    if (!samename) { t.Name = newname; }
+                    g.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
+                }
+            }
+            DrawToBuffer(grafx.Graphics);
+            this.splitContainer1.Panel2.Invalidate();
+
+        }
+
+        private void rename_Click(object sender, EventArgs e)
+        {
+            string newname = this.nodname.Text;
+            //this.Text += " " + this.nodname.Text;
+            changename(grafx.Graphics, newname);
+            this.splitContainer1.Panel2.Invalidate();
+
+        }
+
+        private void rename_Click(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar.GetTypeCode().Equals(Keys.Enter.GetTypeCode()))
+            {
+                string newname = this.nodname.Text;
+                //this.Text += " " + this.nodname.Text;
+                changename(grafx.Graphics, newname);
+                this.splitContainer1.Panel2.Invalidate();
+
+            }
         }
     }
 }
