@@ -34,7 +34,7 @@ namespace PetriNets
         {
             this.Fieldnumber = fieldnum;   
             this.ID = Id_cntr++;
-            Name = "m" + ID;
+            Name = "p" + ID;
             Tokens = 0;
             DictOfIn = new Dictionary<Transition, int>();
             Lin = new List<int>();
