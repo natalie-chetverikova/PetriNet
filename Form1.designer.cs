@@ -49,6 +49,7 @@
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.delete = new System.Windows.Forms.ToolStripButton();
             this.graph = new System.Windows.Forms.ToolStripButton();
+            this.tree = new System.Windows.Forms.ToolStripButton();
             this.P = new System.Windows.Forms.Button();
             this.t = new System.Windows.Forms.Button();
             this.tt = new System.Windows.Forms.Button();
@@ -56,7 +57,7 @@
             this.cursor = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tree = new System.Windows.Forms.ToolStripButton();
+            this.nodname = new System.Windows.Forms.TextBox();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -129,7 +130,7 @@
             this.dq.Image = ((System.Drawing.Image)(resources.GetObject("dq.Image")));
             this.dq.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dq.Name = "dq";
-            this.dq.Size = new System.Drawing.Size(44, 22);
+            this.dq.Size = new System.Drawing.Size(42, 22);
             this.dq.Text = "DQ";
             this.dq.ToolTipText = "Матрица выходов";
             this.dq.Click += new System.EventHandler(this.dq_Click);
@@ -149,7 +150,7 @@
             this.markup.Image = ((System.Drawing.Image)(resources.GetObject("markup.Image")));
             this.markup.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.markup.Name = "markup";
-            this.markup.Size = new System.Drawing.Size(44, 22);
+            this.markup.Size = new System.Drawing.Size(41, 22);
             this.markup.Text = "M0";
             this.markup.ToolTipText = "Маркировка";
             this.markup.Click += new System.EventHandler(this.markup_Click);
@@ -222,6 +223,16 @@
             this.graph.Size = new System.Drawing.Size(23, 22);
             this.graph.Text = "graph";
             this.graph.Click += new System.EventHandler(this.graph_Click);
+            // 
+            // tree
+            // 
+            this.tree.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tree.Image = ((System.Drawing.Image)(resources.GetObject("tree.Image")));
+            this.tree.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tree.Name = "tree";
+            this.tree.Size = new System.Drawing.Size(23, 22);
+            this.tree.Text = "tree";
+            this.tree.Click += new System.EventHandler(this.tree_Click_1);
             // 
             // P
             // 
@@ -319,21 +330,20 @@
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             // 
-            // tree
+            // nodname
             // 
-            this.tree.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tree.Image = ((System.Drawing.Image)(resources.GetObject("tree.Image")));
-            this.tree.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tree.Name = "tree";
-            this.tree.Size = new System.Drawing.Size(23, 22);
-            this.tree.Text = "tree";
-            this.tree.Click += new System.EventHandler(this.tree_Click_1);
+            this.nodname.Location = new System.Drawing.Point(599, -1);
+            this.nodname.Name = "nodname";
+            this.nodname.Size = new System.Drawing.Size(114, 20);
+            this.nodname.TabIndex = 2;
+            this.nodname.TextChanged += new System.EventHandler(this.rename_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 362);
+            this.Controls.Add(this.nodname);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -379,6 +389,7 @@
         private System.Windows.Forms.ToolStripButton delete;
         private System.Windows.Forms.ToolStripButton graph;
         private System.Windows.Forms.ToolStripButton tree;
+        private System.Windows.Forms.TextBox nodname;
 
     }
 }
