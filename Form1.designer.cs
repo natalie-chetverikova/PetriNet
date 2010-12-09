@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.di = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -57,11 +56,28 @@
             this.cursor = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.nodname = new System.Windows.Forms.TextBox();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.modelate = new System.Windows.Forms.ToolStripButton();
+            this.drawing = new System.Windows.Forms.ToolStripButton();
+            this.step = new System.Windows.Forms.ToolStripButton();
+            this.go = new System.Windows.Forms.ToolStripButton();
+            this.faraway = new System.Windows.Forms.ToolStripButton();
+            this.current_step = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.max_steps = new System.Windows.Forms.ToolStripTextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.reset = new System.Windows.Forms.ToolStripButton();
+            this.stop = new System.Windows.Forms.ToolStripButton();
+            this.faster = new System.Windows.Forms.ToolStripButton();
+            this.slower = new System.Windows.Forms.ToolStripButton();
+            this.test = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.toolStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -69,6 +85,7 @@
             this.toolStrip1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modelate,
             this.toolStripSeparator12,
             this.toolStripSeparator11,
             this.di,
@@ -89,21 +106,11 @@
             this.delete,
             this.graph,
             this.tree});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(784, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
             // 
             // di
             // 
@@ -130,7 +137,7 @@
             this.dq.Image = ((System.Drawing.Image)(resources.GetObject("dq.Image")));
             this.dq.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dq.Name = "dq";
-            this.dq.Size = new System.Drawing.Size(42, 22);
+            this.dq.Size = new System.Drawing.Size(44, 22);
             this.dq.Text = "DQ";
             this.dq.ToolTipText = "Матрица выходов";
             this.dq.Click += new System.EventHandler(this.dq_Click);
@@ -150,7 +157,7 @@
             this.markup.Image = ((System.Drawing.Image)(resources.GetObject("markup.Image")));
             this.markup.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.markup.Name = "markup";
-            this.markup.Size = new System.Drawing.Size(41, 22);
+            this.markup.Size = new System.Drawing.Size(44, 22);
             this.markup.Text = "M0";
             this.markup.ToolTipText = "Маркировка";
             this.markup.Click += new System.EventHandler(this.markup_Click);
@@ -221,7 +228,7 @@
             this.graph.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.graph.Name = "graph";
             this.graph.Size = new System.Drawing.Size(23, 22);
-            this.graph.Text = "graph";
+            this.graph.Text = "Дракула";
             this.graph.Click += new System.EventHandler(this.graph_Click);
             // 
             // tree
@@ -231,7 +238,7 @@
             this.tree.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tree.Name = "tree";
             this.tree.Size = new System.Drawing.Size(23, 22);
-            this.tree.Text = "tree";
+            this.tree.Text = "Бревно";
             this.tree.Click += new System.EventHandler(this.tree_Click_1);
             // 
             // P
@@ -306,7 +313,7 @@
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 50);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -325,27 +332,173 @@
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(784, 337);
+            this.splitContainer1.Size = new System.Drawing.Size(784, 312);
             this.splitContainer1.SplitterDistance = 57;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 0;
             // 
-            // nodname
+            // toolStripSeparator11
             // 
-            this.nodname.Location = new System.Drawing.Point(599, -1);
-            this.nodname.Name = "nodname";
-            this.nodname.Size = new System.Drawing.Size(114, 20);
-            this.nodname.TabIndex = 2;
-            this.nodname.TextChanged += new System.EventHandler(this.rename_Click);
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStrip2
+            // 
+            this.toolStrip2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.drawing,
+            this.step,
+            this.go,
+            this.stop,
+            this.faraway,
+            this.reset,
+            this.current_step,
+            this.toolStripLabel2,
+            this.max_steps,
+            this.faster,
+            this.slower,
+            this.test});
+            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.Size = new System.Drawing.Size(784, 25);
+            this.toolStrip2.TabIndex = 2;
+            this.toolStrip2.Text = "toolStrip2";
+            this.toolStrip2.Visible = false;
+            // 
+            // modelate
+            // 
+            this.modelate.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.modelate.Image = ((System.Drawing.Image)(resources.GetObject("modelate.Image")));
+            this.modelate.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.modelate.Name = "modelate";
+            this.modelate.Size = new System.Drawing.Size(23, 22);
+            this.modelate.Text = "Прогонялка";
+            this.modelate.Click += new System.EventHandler(this.modelate_Click);
+            // 
+            // drawing
+            // 
+            this.drawing.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.drawing.Image = ((System.Drawing.Image)(resources.GetObject("drawing.Image")));
+            this.drawing.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.drawing.Name = "drawing";
+            this.drawing.Size = new System.Drawing.Size(23, 22);
+            this.drawing.Text = "Рисовалка";
+            this.drawing.Click += new System.EventHandler(this.drawing_Click);
+            // 
+            // step
+            // 
+            this.step.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.step.Image = ((System.Drawing.Image)(resources.GetObject("step.Image")));
+            this.step.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.step.Name = "step";
+            this.step.Size = new System.Drawing.Size(23, 22);
+            this.step.Text = "Шаг";
+            this.step.Click += new System.EventHandler(this.step_Click);
+            // 
+            // go
+            // 
+            this.go.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.go.Image = ((System.Drawing.Image)(resources.GetObject("go.Image")));
+            this.go.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.go.Name = "go";
+            this.go.Size = new System.Drawing.Size(23, 22);
+            this.go.Text = "Старт";
+            this.go.Click += new System.EventHandler(this.go_Click);
+            // 
+            // faraway
+            // 
+            this.faraway.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.faraway.Image = ((System.Drawing.Image)(resources.GetObject("faraway.Image")));
+            this.faraway.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.faraway.Name = "faraway";
+            this.faraway.Size = new System.Drawing.Size(23, 22);
+            this.faraway.Text = "До конца";
+            this.faraway.Click += new System.EventHandler(this.faraway_Click);
+            // 
+            // current_step
+            // 
+            this.current_step.AutoSize = false;
+            this.current_step.Name = "current_step";
+            this.current_step.Size = new System.Drawing.Size(55, 22);
+            this.current_step.Text = "Шаг: ";
+            this.current_step.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(19, 22);
+            this.toolStripLabel2.Text = "из";
+            // 
+            // max_steps
+            // 
+            this.max_steps.Name = "max_steps";
+            this.max_steps.Size = new System.Drawing.Size(40, 25);
+            this.max_steps.TextChanged += new System.EventHandler(this.max_steps_TextChanged);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // reset
+            // 
+            this.reset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.reset.Image = ((System.Drawing.Image)(resources.GetObject("reset.Image")));
+            this.reset.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.reset.Name = "reset";
+            this.reset.Size = new System.Drawing.Size(23, 22);
+            this.reset.Text = "Сбросить";
+            this.reset.Click += new System.EventHandler(this.reset_Click);
+            // 
+            // stop
+            // 
+            this.stop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stop.Image = ((System.Drawing.Image)(resources.GetObject("stop.Image")));
+            this.stop.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.stop.Name = "stop";
+            this.stop.Size = new System.Drawing.Size(23, 22);
+            this.stop.Text = "Стоп";
+            this.stop.Click += new System.EventHandler(this.stop_Click);
+            // 
+            // faster
+            // 
+            this.faster.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.faster.Image = ((System.Drawing.Image)(resources.GetObject("faster.Image")));
+            this.faster.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.faster.Name = "faster";
+            this.faster.Size = new System.Drawing.Size(23, 22);
+            this.faster.Text = "Быстрее";
+            this.faster.Click += new System.EventHandler(this.faster_Click);
+            // 
+            // slower
+            // 
+            this.slower.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.slower.Image = ((System.Drawing.Image)(resources.GetObject("slower.Image")));
+            this.slower.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.slower.Name = "slower";
+            this.slower.Size = new System.Drawing.Size(23, 22);
+            this.slower.Text = "Медленнее";
+            this.slower.Click += new System.EventHandler(this.slower_Click);
+            // 
+            // test
+            // 
+            this.test.Name = "test";
+            this.test.Size = new System.Drawing.Size(26, 22);
+            this.test.Text = "test";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 362);
-            this.Controls.Add(this.nodname);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.toolStrip2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Form1";
@@ -354,6 +507,8 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -384,12 +539,26 @@
         private System.Windows.Forms.ToolStripButton open;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripButton delete;
         private System.Windows.Forms.ToolStripButton graph;
         private System.Windows.Forms.ToolStripButton tree;
-        private System.Windows.Forms.TextBox nodname;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStrip toolStrip2;
+        private System.Windows.Forms.ToolStripButton modelate;
+        private System.Windows.Forms.ToolStripButton drawing;
+        private System.Windows.Forms.ToolStripButton step;
+        private System.Windows.Forms.ToolStripButton go;
+        private System.Windows.Forms.ToolStripButton faraway;
+        private System.Windows.Forms.ToolStripLabel current_step;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolStripTextBox max_steps;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripButton stop;
+        private System.Windows.Forms.ToolStripButton reset;
+        private System.Windows.Forms.ToolStripButton faster;
+        private System.Windows.Forms.ToolStripButton slower;
+        private System.Windows.Forms.ToolStripLabel test;
 
     }
 }

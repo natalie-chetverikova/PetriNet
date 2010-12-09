@@ -17,6 +17,8 @@ namespace PetriNets
     public partial class Form1 : Form
     {
 //blablabla
+        private int step_num = 100;
+        private int cur_step = 0;
         private int[,] drawing_Field;
         private int sc = 10;
         private Rectangle rect;
@@ -76,14 +78,14 @@ namespace PetriNets
             el_num[2] = -1;
             el_num[3] = -2;
             this.Text = "Petri Panda Project";
-            //текстбокс для переименовывания нодов
-            nodname.Visible = false;
-
+            this.max_steps.Text = "" + step_num;
+            this.current_step.Text = "" + cur_step;
             context = BufferedGraphicsManager.Current;
             context.MaximumBuffer = new Size(this.splitContainer1.Panel2.Width + 1, this.splitContainer1.Panel2.Height + 1);
             grafx = context.Allocate(this.splitContainer1.Panel2.CreateGraphics(), new Rectangle(0, 0, this.splitContainer1.Panel2.Width, this.splitContainer1.Panel2.Height));
             grafx.Graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, this.splitContainer1.Panel2.Width, this.splitContainer1.Panel2.Height));
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, false);
+            
             //del
             //drawing_Field = new int[field_Size, field_Size];
             //el_pos = new System.Collections.Generic.Dictionary<int, Point>();
@@ -121,7 +123,6 @@ namespace PetriNets
         //    }
         void Panel2_MouseDown(object sender, MouseEventArgs e)
         {
-            
             int x = e.X / sc;
             int y = e.Y / sc;
             if (drawing_Field[x, y] > 10 && e.Button.Equals(MouseButtons.Right) && arr_pos[indexpair[drawing_Field[x, y]]].Tokens > 0)
@@ -255,7 +256,7 @@ namespace PetriNets
                 istomove = false;
             }
         }
-        //ИСПРАВИТЬ ЭТОТ МЕТОД
+        //ИСПРАВИТЬ ЭТОТ БЛЯ МЕТОД
         private void clearline()
         {
             /*        foreach(KeyValuePair<Point,Point> dic in el_con_points[line])
@@ -281,24 +282,23 @@ namespace PetriNets
                     Object from = arr_pos[indexpair[which]], to = null;
                     foreach (Transition t in arr_trans)
                     {
-                        if (t.Lin.Contains(line))
+                        if (t.Lin.Contains(line) || t.Lin.Contains(-line))
                         {
                             to = t;
                         }
                     }
-                    if (!((Position)from).DictOfIn.ContainsKey((Transition)to))
+                    if (line > 0)
                     {
                         Object t = from;
                         from = to;
                         to = t;
                         lines.connect_two_points(((Transition)from).Location, ((Position)to).Location);
-
                     }
                     else
                     {
                         lines.connect_two_points(((Position)from).Location, ((Transition)to).Location);
                     }
-                    el_con_points[line] = lines.Points;
+                    el_con_points[Math.Abs(line)] = lines.Points;
                 }
 
             }
@@ -309,13 +309,13 @@ namespace PetriNets
                     Object from = arr_trans[indexpair[which]], to = null;
                     foreach (Position p in arr_pos)
                     {
-                        if (p.Lin.Contains(i))
+                        if (p.Lin.Contains(i) || p.Lin.Contains(-i))
                         {
                             to = p;
                         }
                     }
 
-                    if (!((Transition)from).DictOfIn.ContainsKey((Position)to))
+                    if (i>0)
                     {
                         Object t = from;
                         from = to;
@@ -328,7 +328,7 @@ namespace PetriNets
                         lines.connect_two_points(((Transition)from).Location, ((Position)to).Location);
 
                     }
-                    el_con_points[i] = lines.Points;
+                    el_con_points[Math.Abs(i)] = lines.Points;
                 }
             }
         }
@@ -507,14 +507,14 @@ namespace PetriNets
             if (drawing_Field[from.X, from.Y] > 10 && drawing_Field[to.X, to.Y] < 0)
             {
                 ((Position)arr_pos[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_trans[indexpair[drawing_Field[to.X, to.Y]]]);
-                arr_pos[indexpair[drawing_Field[from.X, from.Y]]].Lin.Add(line_counter);
+                arr_pos[indexpair[drawing_Field[from.X, from.Y]]].Lin.Add(-line_counter);
                 arr_trans[indexpair[drawing_Field[to.X, to.Y]]].Lin.Add(line_counter);
              }
 
             if (drawing_Field[from.X, from.Y] < 0 && drawing_Field[to.X, to.Y] > 10)
             {
                 ((Transition)arr_trans[indexpair[drawing_Field[from.X, from.Y]]]).addIn(arr_pos[indexpair[drawing_Field[to.X, to.Y]]]);
-                arr_trans[indexpair[drawing_Field[from.X, from.Y]]].Lin.Add(line_counter);
+                arr_trans[indexpair[drawing_Field[from.X, from.Y]]].Lin.Add(-line_counter);
                 arr_pos[indexpair[drawing_Field[to.X, to.Y]]].Lin.Add(line_counter);
             }
             reconnect_nodes(drawing_Field[from.X, from.Y]);   
@@ -641,7 +641,7 @@ namespace PetriNets
             //            g.DrawString("" + drawing_Field[i, j], Font, Brushes.Blue, sc * i, sc * j);
             //    }
             // g.DrawString("" + System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size.Width, Font, Brushes.Blue, sc * 20, sc * 20);   
-            bool txtbox = false;
+            
                                    
             foreach (Position p in arr_pos)
                     {
@@ -653,7 +653,7 @@ namespace PetriNets
                             case 1:
                                 {
                                     g.FillEllipse(fishkabrush, sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc);
-                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc);
+                                    g.DrawEllipse(new Pen(Brushes.Black, 1), sc * p.Location.X + sc, sc * p.Location.Y + sc, sc, sc); 
                                     break;
                                 }
                             case 2:
@@ -682,17 +682,7 @@ namespace PetriNets
                                 break;
                         }
                         g.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
-                        //высвечивает имя кружка при нажатии
-                        if (p.Fieldnumber == selected)
-                        {
-                            txtbox = true;
-                            this.nodname.Text = p.Name;
-                            this.nodname.Visible = true;
-                            this.nodname.Focus();
-                        }  
-                //
-            
-            }
+                    }
            
                     foreach (Transition t in arr_trans)
                     {
@@ -705,18 +695,7 @@ namespace PetriNets
                             g.DrawRectangle((t.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * t.Location.X, sc * t.Location.Y, sc, sc * 5);
                         }
                         g.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
-                        //высвечивает имя кирпича при нажатии
-                        if (t.Fieldnumber == selected)
-                        {
-                            this.nodname.Text = t.Name;
-                            txtbox = true;
-                            this.nodname.Visible = true;
-                            this.nodname.Focus();
-                        }
-                        //скрыть текстбокс если нод не выбран
-                        if (!txtbox) { this.nodname.Visible = false; }
-                        //
-                       
+                
                     }
                     foreach (Dictionary<Point, Point> lin in el_con_points)
                     {
@@ -793,7 +772,7 @@ namespace PetriNets
 
         private void graph_Click(object sender, EventArgs e)
         {
-            //new Graphs(arr_pos, arr_trans).ShowDialog(this);
+            new Graphs(arr_pos, arr_trans).ShowDialog(this);
         }
 
         private void tree_Click_1(object sender, EventArgs e)
@@ -801,33 +780,87 @@ namespace PetriNets
             new Tree(arr_pos, arr_trans).ShowDialog(this);
         }
 
-        private void changename(Graphics g, string newname)
+        private void modelate_Click(object sender, EventArgs e)
         {
+            this.toolStrip1.Visible = false;
+            this.toolStrip2.Visible = true;
+            this.splitContainer1.Panel2.MouseDown -= new MouseEventHandler(Panel2_MouseDown);
+            this.splitContainer1.Panel2.MouseDoubleClick -= new MouseEventHandler(Panel2_MouseDoubleClick);
+           
+          
+        }
+
+        private void drawing_Click(object sender, EventArgs e)
+        {
+            this.toolStrip2.Visible = false;
+            this.toolStrip1.Visible = true;
+            this.splitContainer1.Panel2.MouseDown += new MouseEventHandler(Panel2_MouseDown);
+            this.splitContainer1.Panel2.MouseDoubleClick += new MouseEventHandler(Panel2_MouseDoubleClick);
+           
+         
+        }
+
+        private void step_Click(object sender, EventArgs e)
+        {
+            //.step();
+            cur_step++;
+            current_step.Text = "" + cur_step;
+        }
+
+        private void go_Click(object sender, EventArgs e)
+        {
+            if (cur_step <= step_num) timer1.Start();
+            timer1.Interval = 300;
+        }
+
+        private void max_steps_TextChanged(object sender, EventArgs e)
+        {
+            Int32.TryParse(max_steps.Text, out step_num);
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //.step()
+            cur_step++;
+            current_step.Text = "" + cur_step;
+            test.Text = "" + timer1.Interval;
+            if (cur_step == step_num)
+            {
+                timer1.Stop();
+            }
+        }
+
+        private void faraway_Click(object sender, EventArgs e)
+        {
+            while (cur_step < step_num)
+            {
+                //.step()
+                cur_step++;
+                current_step.Text = "" + cur_step;
+            }
+        }
+
+        private void stop_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        private void reset_Click(object sender, EventArgs e)
+        {
+            cur_step = 0;
+            current_step.Text = "" + cur_step;
+        }
+
+        private void faster_Click(object sender, EventArgs e)
+        {
+           if (timer1.Interval - 50 > 0) timer1.Interval -= 50;
+        }
+
+        private void slower_Click(object sender, EventArgs e)
+        {
+            timer1.Interval += 100;
             
         }
-
-        private void rename_Click(object sender, EventArgs e)
-        {
-            if (selected != 0)
-            {
-                if (selected > 10)
-                {
-                    Position p = arr_pos[indexpair[selected]];
-                    p.Name = this.nodname.Text;
-                    grafx.Graphics.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
-                }
-
-                if (selected < 0)
-                {
-                   Transition t = arr_trans[indexpair[selected]];
-                   t.Name = this.nodname.Text;
-                   grafx.Graphics.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
-                }
-            }
-            DrawToBuffer(grafx.Graphics);
-            this.splitContainer1.Panel2.Invalidate();
-        }
-
-        }
+    }
 }
 

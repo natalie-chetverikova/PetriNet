@@ -42,8 +42,10 @@ namespace PetriNets
             //Линия из кружка в кирпич
             if (field_matrix[from.X, from.Y] > 10)
             {
+               
+                
                 //Кружок левее кирпича
-                if (to.X < from.X)
+                if (to.X < from.X || Math.Abs(to.X - from.X) <= 2)
                 { inp = output(to, true); }
                 else //Кружок правее кирпича
                 { inp = input(to, true); }
@@ -76,6 +78,19 @@ namespace PetriNets
                 }
                 else                    //Не на одной высоте
                 {
+
+                    if (Math.Abs(to.X - from.X) <= 2) //Один под другим
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (field_matrix[inp[i].X / sc - ((to.X < from.X) ? 0 : 1), inp[i].Y / sc] == 0)
+                            {
+                                f = i;
+                                break;
+                            }
+                        }
+                        field_matrix[outp[f].X / sc + 1, outp[f].Y / sc] = 1;
+                    } else
                     if ((to.Y - from.Y) > 2) //Кружок выше
                     {
                         for (int i = 6; i < 9; i++)
@@ -103,13 +118,10 @@ namespace PetriNets
                             field_matrix[outp[f].X / sc, outp[f].Y / sc - 1] = 1;
                         }
 
-                    if (from.X > to.X) ot = -ot;
+                    if (from.X > to.X || Math.Abs(to.X - from.X) <= 2) ot = -ot;
                     dif_height(inp[t], new Point(outp[f].X, outp[f].Y + (f == 6 ? 0 : 3)), ot);
                 }
-
-
                 field_matrix[inp[t].X / sc - ((to.X < from.X) ? ((to.Y + 1 == from.Y) ? 1 : 0) : 1), inp[t].Y / sc] = 1;
-
             }
             else //Из кирпича в кружок
             {
@@ -152,9 +164,6 @@ namespace PetriNets
                 }
                 field_matrix[inp[t].X / sc - (f == 0 ? 1 : 0), inp[t].Y / sc] = 1;
             }
-
-
-
             return true;
         }
 
@@ -233,10 +242,10 @@ namespace PetriNets
 
                 }
                 if (!points.ContainsKey(outp)) points.Add(outp, a0);
-                if (!points.ContainsKey(a0)) points.Add(a0, a);
+                if (!points.ContainsKey(a0) && !a0.Equals(a)) points.Add(a0, a);
                 if (!points.ContainsKey(a)) points.Add(a, b);
                 if (!points.ContainsKey(b)) points.Add(b, b0);
-                if (!points.ContainsKey(b0)) points.Add(b0, inp);
+                if (!points.ContainsKey(b0) && !b0.Equals(b)) points.Add(b0, inp);
                 
             }
             else
@@ -286,11 +295,11 @@ namespace PetriNets
                     }
 
                   if (!points.ContainsKey(outp)) points.Add(outp, a1);
-                  if (!points.ContainsKey(a1)) points.Add(a1, a0);
-                  if (!points.ContainsKey(a0)) points.Add(a0, a);
+                  if (!points.ContainsKey(a1) && !a1.Equals(a)) points.Add(a1, a0);
+                  if (!points.ContainsKey(a0) && !a0.Equals(a)) points.Add(a0, a);
                   if (!points.ContainsKey(a)) points.Add(a, b);
                   if (!points.ContainsKey(b)) points.Add(b, b0);
-                  if (!points.ContainsKey(b0)) points.Add(b0, inp);
+                  if (!points.ContainsKey(b0) && !b0.Equals(b)) points.Add(b0, inp);
 
             }
             else
@@ -319,7 +328,7 @@ namespace PetriNets
 
                     for (int i = 0; i < field_matrix.GetLength(0); i++)
                     {
-                        if (testX(a, a0)) break;
+                        if (testX(a, outp)) break;
                         a.Y += (int)Math.Pow(-1, i) * (i + 1) * sc;
                         a0.Y += (int)Math.Pow(-1, i) * (i + 1) * sc;
                     }
@@ -332,19 +341,20 @@ namespace PetriNets
 
                         for (int j = 0; j < field_matrix.GetLength(0); j++)
                         {
-                            if (testX(b0, b)) break;
+                            if (testX(b0, inp)) break;
                             b0.Y += (int)Math.Pow(-1, j) * (j + 1) * sc;
                             b.Y += (int)Math.Pow(-1, j) * (j + 1) * sc;
                         }
                     }
-                    if (!points.ContainsKey(outp)) points.Add(outp, a1);
+                    points.Add(outp, a1);
+                    points.Add(b1, inp);
                     if (!points.ContainsKey(a1) && !a1.Equals(a)) points.Add(a1, a0);
                     if (!points.ContainsKey(a0) && !a0.Equals(a)) points.Add(a0, a);
                 if (!points.ContainsKey(a)) points.Add(a, b);
                 //else points.Add(a, b);
-                if (!points.ContainsKey(b)) points.Add(b, b0);
-                if (!points.ContainsKey(b0)) points.Add(b0, b1);
-                if (!points.ContainsKey(b1)) points.Add(b1, inp);
+                if (!points.ContainsKey(b) ) points.Add(b, b0);
+                if (!points.ContainsKey(b0) && !b0.Equals(b)) points.Add(b0, b1);
+                
             }
             else
             {
