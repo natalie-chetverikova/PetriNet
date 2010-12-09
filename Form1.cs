@@ -76,6 +76,7 @@ namespace PetriNets
             el_num[2] = -1;
             el_num[3] = -2;
             this.Text = "Petri Panda Project";
+            //текстбокс для переименовывания нодов
             nodname.Visible = false;
 
             context = BufferedGraphicsManager.Current;
@@ -254,7 +255,7 @@ namespace PetriNets
                 istomove = false;
             }
         }
-        //ИСПРАВИТЬ ЭТОТ БЛЯ МЕТОД
+        //ИСПРАВИТЬ ЭТОТ МЕТОД
         private void clearline()
         {
             /*        foreach(KeyValuePair<Point,Point> dic in el_con_points[line])
@@ -681,7 +682,7 @@ namespace PetriNets
                                 break;
                         }
                         g.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
-                        //qw
+                        //высвечивает имя кружка при нажатии
                         if (p.Fieldnumber == selected)
                         {
                             txtbox = true;
@@ -689,7 +690,7 @@ namespace PetriNets
                             this.nodname.Visible = true;
                             this.nodname.Focus();
                         }  
-                //qw
+                //
             
             }
            
@@ -704,7 +705,7 @@ namespace PetriNets
                             g.DrawRectangle((t.Fieldnumber == selected) ? new Pen(sel_br, 2) : new Pen(Brushes.Black, 2), sc * t.Location.X, sc * t.Location.Y, sc, sc * 5);
                         }
                         g.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
-                        //qw
+                        //высвечивает имя кирпича при нажатии
                         if (t.Fieldnumber == selected)
                         {
                             this.nodname.Text = t.Name;
@@ -712,9 +713,9 @@ namespace PetriNets
                             this.nodname.Visible = true;
                             this.nodname.Focus();
                         }
-                        
+                        //скрыть текстбокс если нод не выбран
                         if (!txtbox) { this.nodname.Visible = false; }
-                        //qw
+                        //
                        
                     }
                     foreach (Dictionary<Point, Point> lin in el_con_points)
@@ -802,58 +803,31 @@ namespace PetriNets
 
         private void changename(Graphics g, string newname)
         {
-            if (selected != 0)
-            {
-                bool samename = false;
-                if (selected > 10)
-                {
-                    Position p = arr_pos[indexpair[selected]];
-                    samename = false;
-                    foreach (Position pp in arr_pos)
-                    {
-                        if (newname.Equals(pp.Name)) { samename = true; break; }
-                    }
-                    if (!samename) { p.Name = newname; }
-                    g.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
-                }
-
-                if (selected < 0)
-                {
-                    Transition t = arr_trans[indexpair[selected]];
-                    samename = false;
-                    foreach (Transition tt in arr_trans)
-                    {
-                        if (newname.Equals(tt.Name)) { samename = true; break; }
-                    }
-                    if (!samename) { t.Name = newname; }
-                    g.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
-                }
-            }
-            DrawToBuffer(grafx.Graphics);
-            this.splitContainer1.Panel2.Invalidate();
-
+            
         }
 
         private void rename_Click(object sender, EventArgs e)
         {
-            string newname = this.nodname.Text;
-            //this.Text += " " + this.nodname.Text;
-            changename(grafx.Graphics, newname);
-            this.splitContainer1.Panel2.Invalidate();
-
-        }
-
-        private void rename_Click(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar.GetTypeCode().Equals(Keys.Enter.GetTypeCode()))
+            if (selected != 0)
             {
-                string newname = this.nodname.Text;
-                //this.Text += " " + this.nodname.Text;
-                changename(grafx.Graphics, newname);
-                this.splitContainer1.Panel2.Invalidate();
+                if (selected > 10)
+                {
+                    Position p = arr_pos[indexpair[selected]];
+                    p.Name = this.nodname.Text;
+                    grafx.Graphics.DrawString(p.Name, Font, (p.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (p.Location.X + 1), (int)(sc * (p.Location.Y - 1.5)));
+                }
 
+                if (selected < 0)
+                {
+                   Transition t = arr_trans[indexpair[selected]];
+                   t.Name = this.nodname.Text;
+                   grafx.Graphics.DrawString(t.Name, Font, (t.Fieldnumber == selected) ? Brushes.HotPink : Brushes.Black, sc * (t.Location.X), (int)(sc * (t.Location.Y - 1.5)));
+                }
             }
+            DrawToBuffer(grafx.Graphics);
+            this.splitContainer1.Panel2.Invalidate();
         }
-    }
+
+        }
 }
 
