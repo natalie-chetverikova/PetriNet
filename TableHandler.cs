@@ -66,7 +66,7 @@ public class TableHandler : Form
                         }
                         
                         grid.Rows.Add(row0);
-                        grid.Rows[j].HeaderCell.Value = ((Transition)arr_trans[j]).name;
+                        grid.Rows[j].HeaderCell.Value = ((Transition)arr_trans[j]).Name;
                     }
                     }
                     break;
@@ -94,7 +94,7 @@ public class TableHandler : Form
                                 }
                             }
                             grid.Rows.Add(row0);
-                            grid.Rows[j].HeaderCell.Value = ((Transition)arr_trans[j]).name;
+                            grid.Rows[j].HeaderCell.Value = ((Transition)arr_trans[j]).Name;
                         }
                     }
                     break;
@@ -126,7 +126,7 @@ public class TableHandler : Form
         
         for (int i = 0; i < col; i++)
         {
-            grid.Columns[i].HeaderText = ((Position)arr_pos[i]).name;
+            grid.Columns[i].HeaderText = ((Position)arr_pos[i]).Name;
         }
         grid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
         
